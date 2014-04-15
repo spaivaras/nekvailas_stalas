@@ -4,7 +4,7 @@ RFID Reader
 A simple 125KHz rfid reader based on a ATMega8
 
 Build around a single timer (Timer1) uses 2 interrupts (INT0 and TIMER1_COMPA) transmits data via UART
-Manchested code decoding based on Timming approach
+Manchester code decoding based on Timing approach. Base clock 8MHz
 
 ------
 
@@ -19,7 +19,10 @@ PD1 - UART TX
 
 PCB
 ------
-Single layer thru-hole in KiCad format
+Single layer through-hole in KiCad format
+ - Drill: 1 mm
+ - Pads: 2mm
+ - Tracks 0.4 mm
 
 
 ---
