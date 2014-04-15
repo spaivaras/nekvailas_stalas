@@ -1,0 +1,34 @@
+# EESchema Netlist Version 1.1 created  Mon 14 Apr 2014 11:02:19 PM EEST
+(
+ ( /534C2DB2 SM0805 C1 C
+  ( 1 /A2 )
+  ( 2 /A1 )
+ )
+ ( /534C2DBC SM0805 C2 C
+  ( 1 /B2 )
+  ( 2 /B1 )
+ )
+ ( /534C2416 PIN_ARRAY_3X1 K1 CONN_3
+  ( 1 /B1 )
+  ( 2 GND )
+  ( 3 /B2 )
+ )
+ ( /534C1E6B C1 P1 CONN_2
+  ( 1 /A1 )
+  ( 2 /A2 )
+ )
+)
+*
+{ Allowed footprints by component:
+$component C1
+ SM*
+ C?
+ C1-1
+$endlist
+$component C2
+ SM*
+ C?
+ C1-1
+$endlist
+$endfootprintlist
+}
