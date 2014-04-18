@@ -27,3 +27,4 @@ Raspberry inputs
 
 - [@drogon](http://wiringpi.com/contact/) - WiringPi
 - [Jeff Rowberg](https://github.com/jrowberg/i2cdevlib) - MPU6050/i2cdevlib
+- [Richard Hirst](https://github.com/richardghirst/PiBits/tree/master/MPU6050-Pi-Demo) - For hacking i2cdevlib on PI :)
