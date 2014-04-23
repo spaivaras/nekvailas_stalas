@@ -1,8 +1,7 @@
-MPU6050 Reader
+Main RPI hardware layer
 =========
 
-A simple combination of libraries and minimalist code for setting up motion interrupt on MPU6050 Gyro
-As well as using Raspberry Pi's GPIO for listening of the mentioned interrupts
+A simple combination of libraries for reading data from [rfid_reader](https://github.com/joinedforces/nekvailas_stalas/tree/master/rfid_reader) via I2C
 
 ------
 
@@ -20,7 +19,10 @@ Raspberry outputs
 
 Raspberry inputs
 -------
-- **P11** - INT
+- **P7** - INT Reader 0
+- **P11** - INT Reader 1
+- **P13** - INT Reader 2
+- **P15** - INT Reader 3
 
 ---
 **Thanks to:**
