@@ -11,17 +11,17 @@ for 1 sec. In that time I2C routines are available to read the user ID.
 
 Input
 -------
-PD2 (INT0) - Input of Card data (after amplifier)
-PC5 - TWI SDC (internal pull-up)
+- **PD2** (INT0) - Input of Card data (after amplifier)
+- **PC5** - TWI SDC (internal pull-up)
 
 Outputs
 -------
-PB1 - Carrier wave (125KHz square)
-PB0 - Interrupt after a successful tag read
+- **PB1** - Carrier wave (125KHz square)
+ - **PB0** - Interrupt after a successful tag read
 
 Mixed
 ------
-PC4 - TWI SDA (internal pull-up)
+- **PC4** - TWI SDA (internal pull-up)
 
 
 PCB
