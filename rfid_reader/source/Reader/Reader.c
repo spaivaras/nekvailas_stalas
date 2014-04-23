@@ -91,13 +91,24 @@ void initCarier()
 	
 	//Compare value for 250KHz toggle (125KHz carrier)
 	OCR1A = 0x1F;
-	
+
+	MCUCR |= (1 << ISC00);
+}
+
+void enableRead()
+{
 	//Enable OC1A toggle interrupt
 	TIMSK |= (1 << OCIE1A);
 	
 	//Enable external pin interrupts any edge
 	GICR |= (1 << INT0);
-	MCUCR |= (1 << ISC00);
+}
+
+void disableRead()
+{
+	//Disable interrupts to leave as much time as possible for i2c
+	TIMSK &= ~(1 << OCIE1A);
+	GICR &= ~(1 << INT0);
 }
 
 /************************************************************************/
@@ -272,8 +283,9 @@ uint8_t readPoll()
 		return 0;
 	}
 	
-	cli();
+	disableRead();	
 	discard();
+	
 	return 1;
 }
 

@@ -26,16 +26,16 @@
     <BootSegment>2</BootSegment>
     <eraseonlaunchrule>0</eraseonlaunchrule>
     <AsfFrameworkConfig>
-      <framework-data xmlns="">
-        <options />
-        <configurations />
-        <files />
-        <documentation help="" />
-        <offline-documentation help="" />
-        <dependencies>
-          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.11.0" />
-        </dependencies>
-      </framework-data>
+      <framework-data>
+  <options />
+  <configurations />
+  <files />
+  <documentation help="" />
+  <offline-documentation help="" />
+  <dependencies>
+    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.11.0" />
+  </dependencies>
+</framework-data>
     </AsfFrameworkConfig>
     <avrtool />
     <avrtoolinterface />
@@ -98,6 +98,21 @@
     <Compile Include="global.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="i2cconf.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="i2c\avrlibdefs.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="i2c\avrlibtypes.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="i2c\i2c.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="i2c\i2c.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Reader\Reader.c">
       <SubType>compile</SubType>
     </Compile>
@@ -115,6 +130,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="i2c" />
     <Folder Include="Reader" />
     <Folder Include="UART" />
   </ItemGroup>

@@ -13,6 +13,9 @@
 /* METHODS                                                              */
 /************************************************************************/
 void initCarier();
+void enableRead();
+void disableRead();
+
 uint8_t readPoll();
 
 uint32_t getSerialData();

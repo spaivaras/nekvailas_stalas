@@ -8,42 +8,55 @@
 
 #include "global.h"
 
-/************************************************************************/
-/* Send vendor and serial data via uart                                 */
-/************************************************************************/
-void announceData()
+unsigned char requestedAddress = 0x00;
+
+void i2cSlaveReceiveService(u08 receiveDataLength, u08* receiveData)
 {
-	char string[12];
-		
-	uart_puts("User detected: \n\r");
-	uart_puts("Vendor ID: ");
+	requestedAddress = *receiveData++;
+}
+
+u08 i2cSlaveTransmitService(u08 transmitDataLengthMax, u08* transmitData)
+{
+	if (requestedAddress != 0x10) {
+		*transmitData++ = 0xff;
+		return 1;
+	}
 	
-	ultoa(getVendorData(), string, 10);
-	uart_puts(string);
+	u32 player = getSerialData();
+	*transmitData++ = (u08)(player >> 24);
+	*transmitData++ = (u08)(player >> 16);
+	*transmitData++ = (u08)(player >> 8);
+	*transmitData++ = (u08)player;
 	
-	uart_puts("\n\rUser ID: ");
-	
-	ultoa(getSerialData(), string, 10);
-	uart_puts(string);
-	
-	uart_puts("\n\r");	
+	return 4;
 }
 
 int main(void)
 {	
 	initCarier();
-	initUart();
+	
+	DDRB |= (1 << PINB0);
+	PORTB &= ~(1 << PINB0);
+	
+	i2cInit();
+	i2cSetLocalDeviceAddr(LOCAL_ADDR, TRUE);
+	i2cSetSlaveTransmitHandler( i2cSlaveTransmitService );
+	i2cSetSlaveReceiveHandler( i2cSlaveReceiveService );
 	
 	//Enable global interrupts
 	sei();
-	
+	enableRead();
+		
     while(1)
     {
 		if (readPoll()) {
-			announceData();
+			PORTB |= (1 << PINB0);
 			
-			//After successful RFID read readPoll disables global interrupts
-			sei();
+			//Some Delay for I2C bus
+			_delay_ms(1000);
+			PORTB &= ~(1 << PINB0);
+			
+			enableRead();
 		}
     }
 }

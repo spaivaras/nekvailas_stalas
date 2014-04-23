@@ -9,11 +9,11 @@
 #ifndef GLOBAL_H_
 #define GLOBAL_H_
 
-#ifndef F_CPU
-	#define F_CPU 8000000UL
-#endif
-
+#define F_CPU 8000000
 #define BAUD 9600UL
+
+//Local device address for I2C
+#define LOCAL_ADDR	103 << 1
 
 #include <avr/io.h>
 #include <stdlib.h>
@@ -23,5 +23,9 @@
 
 #include "UART/UART.h"
 #include "Reader/Reader.h"
+
+#include "i2c/avrlibdefs.h"
+#include "i2c/avrlibtypes.h"
+#include "i2c/i2c.h"
 
 #endif /* GLOBAL_H_ */
