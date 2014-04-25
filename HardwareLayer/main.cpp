@@ -11,6 +11,8 @@
 #include <stdlib.h>
 #include <wiringPi.h>
 #include "I2Cdev.h"
+#include "TableEventsQueue.h"
+
 
 uint32_t getUserData(uint8_t address)
 {
@@ -70,6 +72,13 @@ int setupInterrupts()
  * 
  */
 int main() {
+
+	printf("I'm working hard, give me a break!ok?\n");
+
+	TableEventsQueue Q;
+	Q.addTableShakeEvent();
+	Q.addTableShakeEvent(9999);
+	Q.addCardSwipeEvent(1,2,123456789);
 
     if (!setupInterrupts()) {
         return 0;

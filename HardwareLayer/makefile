@@ -1,9 +1,9 @@
 BIN=hl
-SRC=main.cpp I2Cdev.cpp
+SRC=main.cpp I2Cdev.cpp TableEventsQueue.cpp
 OBJDIR=obj
 OBJ=$(patsubst %,$(OBJDIR)/%,$(SRC:.cpp=.o))
-CC=gcc
-CFLAGS=-lwiringPi
+CC=g++
+CFLAGS=-lwiringPi -lpthread
 LFLAGS=
 
 
@@ -21,6 +21,6 @@ $(OBJDIR):
 
 .PHONY: clean
 clean:
-	rm -f hl $(OBJDIR)/*.o
-	rmdir $(OBJDIR)
+	rm -f hl $(OBJDIR)/*.o test
+	rmdir $(OBJDIR) || true
 
