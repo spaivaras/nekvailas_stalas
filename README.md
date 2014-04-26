@@ -6,3 +6,4 @@ Nekvailas Stalas
 - **rfid_reader** - 125Khz I2C Atmega8 RFID reader
 - **RPi_Gyro** - Attempt to interface MCU6050 gyroscope from RPI
 - **scripts** - Playground :)
+- **api** - web api

@@ -1,0 +1,6 @@
+db:
+  driver: "pdo_mysql"
+  dbname: <db>
+  host:   <host>
+  user:   <user>
+  password: <password>
