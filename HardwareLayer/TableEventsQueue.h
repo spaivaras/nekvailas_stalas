@@ -1,6 +1,8 @@
 #ifndef _TABLEEVENTSQUEUE_H_
 #define _TABLEEVENTSQUEUE_H_
 
+#include "EventsPusher.h"
+
 class TableEventsQueue {
 		static const int MSG_KEY = 1111;
 		static const int MSG_TYPE = 1;
@@ -11,6 +13,7 @@ class TableEventsQueue {
 			long mtype;
 			char mtext[MSG_LEN];
 		} msg;
+		EventsPusher* pusher;
 	public:
 		TableEventsQueue();
 		~TableEventsQueue();

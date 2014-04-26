@@ -4,15 +4,17 @@
 #include <sys/time.h> // gettimeofday
 #include <sys/msg.h> // msgget msgsnd ...
 #include "TableEventsQueue.h"
+#include "EventsPusher.h"
 
 
 TableEventsQueue::TableEventsQueue() {
 	// setup msgq
-	msgq_id = msgget(IPC_PRIVATE, MSG_PERM|IPC_CREAT|IPC_EXCL);
+	msgq_id = msgget(MSG_KEY, MSG_PERM|IPC_CREAT);
 	if (msgq_id < 0) {
 		printf("failed to create message queue with msgqid = %d\n", msgq_id);
 	}
-	printf("constructed: %d\n", msgq_id);
+	printf("TableEventQueue - constructed: %d\n", msgq_id);
+	pusher = new EventsPusher(MSG_KEY);
 }
 
 TableEventsQueue::~TableEventsQueue() {
@@ -21,7 +23,7 @@ TableEventsQueue::~TableEventsQueue() {
 	if (return_code < 0) {
 		printf("msgctl (return queue) failed, return_code=%d\n", return_code);
 	}
-	printf("destructed: %d\n", msgq_id);
+	printf("TableEventsQueue - destructed: %d\n", msgq_id);
 }
 
 void TableEventsQueue::addTableShakeEvent() {
@@ -45,7 +47,7 @@ void TableEventsQueue::addEvent(const char* type, const char* payload) {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
 	char message[256];
-	sprintf(message, "{\"time\":{\"sec\":%ld,\"usec\":%u},\"type\":\"%s\",\"data\":%s}"
+	sprintf(message, "{\"time\":{\"sec\":%ld,\"usec\":%lu},\"type\":\"%s\",\"data\":%s}"
 		, tv.tv_sec, tv.tv_usec, type, payload);
 	sendMessage(message);
 }
