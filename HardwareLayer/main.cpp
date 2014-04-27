@@ -13,6 +13,7 @@
 #include "I2Cdev.h"
 #include "TableEventsQueue.h"
 
+TableEventsQueue Q;
 
 uint32_t getUserData(uint8_t address)
 {
@@ -30,6 +31,10 @@ void userInterrupt(uint8_t id)
 {       
     uint32_t user = getUserData(100 + id);
     printf("\nGot User: %d %u\n", id, user);
+
+    uint8_t team = (id & 1<<1 ) >> 1;
+    uint8_t player = (id & 1);
+    Q.addCardSwipeEvent(team, player, user);
 }
 
 void userInterrupt0()
@@ -68,14 +73,11 @@ int setupInterrupts()
     return 1;
 }
 
-/*
- * 
- */
+
 int main() {
 
 	printf("I'm working hard, give me a break!ok?\n");
 
-	TableEventsQueue Q;
 	Q.addTableShakeEvent();
 	Q.addTableShakeEvent(9999);
 	Q.addCardSwipeEvent(1,2,123456789);
