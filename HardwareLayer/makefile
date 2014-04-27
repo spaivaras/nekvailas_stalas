@@ -3,8 +3,8 @@ SRC=main.cpp I2Cdev.cpp TableEventsQueue.cpp EventsPusher.cpp
 OBJDIR=obj
 OBJ=$(patsubst %,$(OBJDIR)/%,$(SRC:.cpp=.o))
 CC=g++
-CFLAGS=-pedantic -Wall
-LFLAGS=-lwiringPi -lpthread
+CFLAGS=-pedantic -Wall -g
+LFLAGS=-lwiringPi -lpthread -lcurl
 
 
 all: $(OBJDIR) $(BIN)

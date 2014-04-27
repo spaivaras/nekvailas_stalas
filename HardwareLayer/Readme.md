@@ -9,6 +9,37 @@ Dependencies
 -------
 - This code is cardinally linked to [WiringPi library](http://wiringpi.com/)
 - Binary also needs root access to work because of access to **/dev/mem**
+- Using **libcurl** to submit event to remote server
+
+
+### compile dependencies
+
+    sudo apt-get update
+    sudo apt-get install git-core libcurl4-gnutls-dev
+	git clone git://git.drogon.net/wiringPi /tmp/wiringPi
+	cd /tmp/wiringPi
+	./build
+	cd -
+	rm -r /tmp/wiringPi
+
+
+## Outgoing data
+
+**example data submitted to remote server**
+
+    {"time":{"sec":1398619851,"usec":844563},"type":"TableShake","data":{}}
+    {"time":{"sec":1398619851,"usec":846044},"type":"TableShake","data":{"power":9999}}
+    {"time":{"sec":1398619851,"usec":847409},"type":"CardSwipe","data":{"team":1,"player":2,"card_id":123456789}}
+
+**example remote server code**
+
+    <?php
+    $data = file_get_contents('php://input');
+    do_magic($data);
+	header('X-TableEventStored: 1');
+
+**NOTE** 1 should be returned only if data was written successfully in a transaction manner.
+
 
 Raspberry outputs
 -------

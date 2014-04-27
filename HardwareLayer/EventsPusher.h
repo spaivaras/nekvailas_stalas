@@ -11,15 +11,21 @@ class EventsPusher {
 			long mtype;
 			char mtext[MSG_LEN];
 		} msg;
+		struct CurlBufferStruct {
+			char *memory;
+			size_t size;
+		} curl_buffer;
 		pthread_t pusher_thread;
 	public:
 		EventsPusher(int msg_key);
 		~EventsPusher();
         static void* pusherThreadStaticEntryPoint(void *arg) { ((EventsPusher*)arg)->pusherThreadEntryPoint(); return NULL; };
+		static size_t curlCallback(void *chunk, size_t size, size_t nmemb, void *buffer);
 		void pusherThreadEntryPoint();
-//		void flusherThreadEntryPoint();
-//	private:
-
+	private:
+		int readMessage();
+		int pushMessage(char *message);
+		void curlFreeBuffer(struct CurlBufferStruct *b);
 };
 
 #endif
