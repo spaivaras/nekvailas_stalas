@@ -128,6 +128,8 @@ typedef enum
 //! Initialize I2C (TWI) interface
 void i2cInit(void);
 
+void i2cDestroy(void);
+
 //! Set the I2C transaction bitrate (in KHz)
 void i2cSetBitrate(u16 bitrateKHz);
 

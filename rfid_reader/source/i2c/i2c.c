@@ -42,12 +42,9 @@ void i2cInit(void)
 {
 	// set pull-up resistors on I2C bus pins
 	// TODO: should #ifdef these
-	sbi(PORTC, 4);	// i2c SCL on ATmega163,323,16,32,etc
-	sbi(PORTC, 5);	// i2c SDA on ATmega163,323,16,32,etc
+	//sbi(PORTC, 4);	// i2c SCL on ATmega163,323,16,32,etc
+	//sbi(PORTC, 5);	// i2c SDA on ATmega163,323,16,32,etc
 
-	// clear SlaveReceive and SlaveTransmit handler to null
-	i2cSlaveReceive = 0;
-	i2cSlaveTransmit = 0;
 	// set i2c bit rate to 100KHz
 	i2cSetBitrate(100);
 	// enable TWI (two-wire interface)
@@ -58,6 +55,15 @@ void i2cInit(void)
 	sbi(TWCR, TWIE);
 	sbi(TWCR, TWEA);
 	//outb(TWCR, (inb(TWCR)&TWCR_CMD_MASK)|BV(TWINT)|BV(TWEA));
+}
+
+void i2cDestroy(void)
+{
+	cbi(TWCR, TWINT);
+	cbi(TWCR, TWEN);
+	cbi(TWCR, TWIE);
+	cbi(TWCR, TWEA);
+	
 }
 
 void i2cSetBitrate(u16 bitrateKHz)

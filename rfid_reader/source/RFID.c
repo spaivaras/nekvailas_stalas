@@ -38,8 +38,7 @@ int main(void)
 	DDRB |= (1 << PINB0);
 	PORTB &= ~(1 << PINB0);
 	
-	i2cInit();
-	i2cSetLocalDeviceAddr(LOCAL_ADDR, TRUE);
+	i2cSetLocalDeviceAddr(LOCAL_ADDR, FALSE);
 	i2cSetSlaveTransmitHandler( i2cSlaveTransmitService );
 	i2cSetSlaveReceiveHandler( i2cSlaveReceiveService );
 	
@@ -50,12 +49,13 @@ int main(void)
     while(1)
     {
 		if (readPoll()) {
+			i2cInit();
 			PORTB |= (1 << PINB0);
 			
 			//Some Delay for I2C bus
 			_delay_ms(1000);
 			PORTB &= ~(1 << PINB0);
-			
+			i2cDestroy();
 			enableRead();
 		}
     }

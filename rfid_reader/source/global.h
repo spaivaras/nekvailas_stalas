@@ -13,7 +13,7 @@
 #define BAUD 9600UL
 
 //Local device address for I2C
-#define LOCAL_ADDR	103 << 1
+#define LOCAL_ADDR	100 << 1
 
 #include <avr/io.h>
 #include <stdlib.h>
