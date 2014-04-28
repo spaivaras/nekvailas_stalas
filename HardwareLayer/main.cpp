@@ -5,11 +5,15 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <wiringPi.h>
+#include <signal.h>
+#include <string.h> // strsignal()
+
 #include "I2Cdev.h"
 #include "TableEventsQueue.h"
 #include "sleep.h"
 
 
+volatile sig_atomic_t is_it_good_time_to_die = false;
 
 TableEventsQueue Q;
 
@@ -71,25 +75,37 @@ int setupInterrupts()
     return 0;
 }
 
+void sigTerminateEntryPoint(int sig) {
+	printf("Terminating on signal(%d) - %s\n", sig, strsignal(sig));
+	is_it_good_time_to_die = true;
+}
+void setupSignals() {
+	signal(SIGHUP, sigTerminateEntryPoint);
+	signal(SIGINT, sigTerminateEntryPoint);
+	signal(SIGABRT, sigTerminateEntryPoint);
+	signal(SIGTERM, sigTerminateEntryPoint);
+}
 
 int main() {
-
 	printf("I'm working hard, give me a break!ok?\n");
 
+	setupSignals();
 
-    if (setupInterrupts() < 0) {
-        return -1;
-    }
+	if (setupInterrupts() < 0) {
+		return -1;
+	}
 
 	Q.addTableShakeEvent();
 	Q.addTableShakeEvent(9999);
 	Q.addCardSwipeEvent(1,2,123456789);
 
-    
-    while(1){
-        msleep(10);
-    }
+
+	while(!is_it_good_time_to_die){
+		msleep(10);
+	}
+
+	printf("I made peace with myself. Now I`m ready to return from main loop...\n");
  
-    return 0;
+	return 0;
 }
 
