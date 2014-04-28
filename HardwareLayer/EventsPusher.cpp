@@ -66,6 +66,10 @@ int EventsPusher::pushMessage(char *message) {
 
 	CURL *curl;
 	CURLcode res;
+
+	struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers, "Content-Type: application/json");
+
 	// make sure we starting fresh on empty buffer
 	curlFreeBuffer(&curl_buffer);
 
@@ -80,6 +84,7 @@ int EventsPusher::pushMessage(char *message) {
 		curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
 		curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
 		curl_easy_setopt(curl, CURLOPT_USERAGENT, "nekvailas-stalas/0.1");
+		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&curl_buffer);
