@@ -19,6 +19,9 @@ int msleep(long ms) {
 }
 
 int sleep(long s) {
-	return nsleep(s*1000*1000*1000);
+	struct timespec req={0};
+	req.tv_sec=s;
+	req.tv_nsec=0;
+	return nanosleep(&req, NULL);
 }
 
