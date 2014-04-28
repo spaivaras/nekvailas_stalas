@@ -79,7 +79,7 @@ int EventsPusher::pushMessage(char *message) {
 
 	curl = curl_easy_init();
 	if(curl) {
-		curl_easy_setopt(curl, CURLOPT_URL, "http://dardev.misc.at.lt/tmp/hl.php");
+		curl_easy_setopt(curl, CURLOPT_URL, REMOTE_API_URL);
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, message);
 		curl_easy_setopt(curl, CURLOPT_HEADER, 1);
 		//curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
