@@ -60,7 +60,7 @@ int setupInterrupts()
     int status = wiringPiSetup();
     if (status < 0) {
         printf ("Unable to setup wiringPi: %d\n", status);
-        return 0;
+        return -1;
     }
     
     wiringPiISR (7, INT_EDGE_RISING, &userInterrupt0);
@@ -68,7 +68,7 @@ int setupInterrupts()
     wiringPiISR (2, INT_EDGE_RISING, &userInterrupt2);
     wiringPiISR (3, INT_EDGE_RISING, &userInterrupt3);
 
-    return 1;
+    return 0;
 }
 
 
@@ -76,13 +76,15 @@ int main() {
 
 	printf("I'm working hard, give me a break!ok?\n");
 
+
+    if (setupInterrupts() < 0) {
+        return -1;
+    }
+
 	Q.addTableShakeEvent();
 	Q.addTableShakeEvent(9999);
 	Q.addCardSwipeEvent(1,2,123456789);
 
-    if (!setupInterrupts()) {
-        return 0;
-    }
     
     while(1){
         msleep(10);
