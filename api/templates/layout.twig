@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+    {% block head %}
+        <meta charset="UTF-8" />
+        <title>{% block title %}table status{% endblock %}</title>
+        <meta name="description" content="{% block description %}{% endblock %}"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    {% endblock %}
+</head>
+
+<body>
+
+    <div id="wrap">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js'></script>
+    {% block javascript %}{% endblock %}
+
+</body>
+</html>

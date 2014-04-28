@@ -4,25 +4,27 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * Main / to say hello
+ * Main page to say hello and show table status via json api
  *
  * @return Response
  */
 $app->get('/', function () use ($app) {
-    return new Response("hi");
+    return $app['twig']->render('index.twig', []);
 });
 
 /**
  * Get table status.
  *
  * returns table status:
- * status: ok|error
+ * status: ok
  * message: table free|table busy
  *
  * @return JsonResponse
  */
 
-$app->get('/app/v1/status', function () {
+$app->get('/api/v1/status', function () {
+    // @todo
+    // get status from DB or file
     return new JsonResponse(["status" => "ok", "message" => "table free"]);
 });
 
@@ -78,5 +80,5 @@ $app->post('/api/v1/event', function (Request $request) use ($app) {
     // {"time":{"sec":1398619851,"usec":844563},"type":"TableShake","data":{}}
     // {"time":{"sec":1398619851,"usec":847409},"type":"CardSwipe","data":{"team":1,"player":2,"card_id":123456789}}
 
-    return new JsonResponse(["status" => "ok"], ["X-TableEventStored: 1"]);
+    return new JsonResponse(["status" => "ok"], 200, ["X-TableEventStored" => "1"]);
 });

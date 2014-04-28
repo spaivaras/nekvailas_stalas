@@ -1,0 +1,22 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <h1>status</h1>
+    <div id="status"></div>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        var getStatus = function() {
+            $.getJSON( "http://{{ app.request.host }}/api/v1/status", function(data) {
+                if (data.status) {
+                    $("#status").html(data.message);
+                }
+            })
+            .fail(function() {
+                $("#status").html("offline");
+            });
+        }
+        var tid = setInterval(getStatus, 3000);
+    </script>
+{% endblock %}

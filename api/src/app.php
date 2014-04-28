@@ -2,15 +2,19 @@
 
 use Silex\Application;
 use Symfony\Component\Yaml\Yaml;
-//use Silex\Provider\ServiceControllerServiceProvider;
+use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\DoctrineServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
+use Silex\Provider\TwigServiceProvider;
 
 date_default_timezone_set('Europe/Vilnius');
 
 $app = new Application();
 
-//$app->register(new ServiceControllerServiceProvider());
+$app->register(new ServiceControllerServiceProvider());
+$app->register(new TwigServiceProvider(), array(
+    'twig.path'    => array(__DIR__.'/../templates'),
+));
 
 $config = Yaml::parse(__DIR__."/../config.yml");
 $app->register(new DoctrineServiceProvider(), array(
