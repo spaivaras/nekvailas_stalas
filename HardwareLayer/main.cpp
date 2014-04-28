@@ -1,9 +1,4 @@
-/* 
- * File:   main.cpp
- * Author: Aivaras
- *
- * Created on Pirmadienis, 2014, Balandžio 21, 17.53
- */
+#include "config.h"
 
 #include <stdio.h>
 #include <stdint.h>
@@ -14,7 +9,6 @@
 #include "TableEventsQueue.h"
 #include "sleep.h"
 
-#define PROJECT_NAME "nekvailas_stalas"
 
 
 TableEventsQueue Q;

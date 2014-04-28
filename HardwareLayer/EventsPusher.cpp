@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include <stdio.h> // sprintf and friends
 #include <stdint.h> // uint?_t types
 #include <stdlib.h> // NULL
@@ -44,9 +46,11 @@ EventsPusher::~EventsPusher() {
 
 void EventsPusher::pusherThreadEntryPoint() {
 	printf("Pusher Thread got created\n");
+	char message[MSG_LEN+2];
 	while (true) {
 		readMessage();
-		pushMessage(msg.mtext);
+		sprintf(message, "[%s]", msg.mtext);
+		pushMessage(message);
 	}
 }
 
@@ -83,7 +87,7 @@ int EventsPusher::pushMessage(char *message) {
 
 		curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
 		curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
-		curl_easy_setopt(curl, CURLOPT_USERAGENT, "nekvailas-stalas/0.1");
+		curl_easy_setopt(curl, CURLOPT_USERAGENT, PROJECT_NAME);
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlCallback);

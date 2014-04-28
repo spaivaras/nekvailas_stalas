@@ -7,7 +7,7 @@ class EventsPusher {
 		static const int MSG_LEN = 256;
 		static const int MSG_PERM = 0777;
 		int msgq_id;
-		struct msg_buf {
+		struct MessageBuffer {
 			long mtype;
 			char mtext[MSG_LEN];
 		} msg;
