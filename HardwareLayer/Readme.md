@@ -27,9 +27,11 @@ Dependencies
 
 **example data submitted to remote server**
 
-    {"time":{"sec":1398619851,"usec":844563},"type":"TableShake","data":{}}
-    {"time":{"sec":1398619851,"usec":846044},"type":"TableShake","data":{"power":9999}}
+    [
+    {"time":{"sec":1398619851,"usec":844563},"type":"TableShake","data":{}},
+    {"time":{"sec":1398619851,"usec":846044},"type":"TableShake","data":{"power":9999}},
     {"time":{"sec":1398619851,"usec":847409},"type":"CardSwipe","data":{"team":1,"player":2,"card_id":123456789}}
+    ]
 
 **example remote server code**
 
@@ -38,7 +40,14 @@ Dependencies
     do_magic($data);
 	header('X-TableEventStored: 1');
 
-**NOTE** 1 should be returned only if data was written successfully in a transaction manner.
+**API should**
+
+* return ***X-TableEventStored*** header with value 1 only if data
+  was written successfully in a transaction manner. On failure header
+  should be returned with negative value.
+* handel empty json arrays ***[]*** by simply returning success header value
+* handel empty event objects ***[{}]*** by ignoring them while proccessing
+  non-empty objects in the same array as expected.
 
 
 Raspberry outputs
