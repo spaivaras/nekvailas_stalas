@@ -1,5 +1,5 @@
 BIN=hl
-SRC=main.cpp I2Cdev.cpp TableEventsQueue.cpp EventsPusher.cpp
+SRC=main.cpp I2Cdev.cpp TableEventsQueue.cpp EventsPusher.cpp sleep.cpp
 OBJDIR=obj
 OBJ=$(patsubst %,$(OBJDIR)/%,$(SRC:.cpp=.o))
 CC=g++

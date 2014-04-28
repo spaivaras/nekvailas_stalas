@@ -12,6 +12,10 @@
 #include <wiringPi.h>
 #include "I2Cdev.h"
 #include "TableEventsQueue.h"
+#include "sleep.h"
+
+#define PROJECT_NAME "nekvailas_stalas"
+
 
 TableEventsQueue Q;
 
@@ -86,7 +90,9 @@ int main() {
         return 0;
     }
     
-    while(1){}
+    while(1){
+        msleep(10);
+    }
  
     return 0;
 }
