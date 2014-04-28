@@ -2,6 +2,5 @@
 *.bak
 .idea/
 api/vendor/
-api/composer.lock
 api/composer.phar
 api/config.yml
