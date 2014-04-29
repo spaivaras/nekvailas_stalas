@@ -8,7 +8,7 @@
 {% block javascript %}
     <script>
         var getStatus = function() {
-            $.getJSON( "http://{{ app.request.host }}/api/v1/status", function(data) {
+            $.getJSON( "http://{{ app.request.host }}/kickertable/api/v1/status", function(data) {
                 if (data.status) {
                     $("#status").html(data.message);
                 }
