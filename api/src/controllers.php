@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  *
  * @return Response
  */
-$app->get('/', function () use ($app) {
+$app->get('/kickertable/', function () use ($app) {
     return $app['twig']->render('index.twig', []);
 });
 
@@ -22,7 +22,7 @@ $app->get('/', function () use ($app) {
  * @return JsonResponse
  */
 
-$app->get('/api/v1/status', function () {
+$app->get('/kickertable/api/v1/status', function () {
     // @todo
     // get status from DB or file
     return new JsonResponse(["status" => "ok", "message" => "table free"]);
@@ -35,7 +35,7 @@ $app->get('/api/v1/status', function () {
  *
  * @return JsonResponse
  */
-$app->get('/api/v1/events', function () {
+$app->get('/kickertable/api/v1/events', function () {
     // @todo
     // return events data from DB
     // sample data
@@ -67,7 +67,7 @@ $app->get('/api/v1/events', function () {
  *
  * @return JsonResponse
  */
-$app->post('/api/v1/event', function (Request $request) use ($app) {
+$app->post('/kickertable/api/v1/event', function (Request $request) use ($app) {
     if (!$data = $request->request->all()) {
         return new JsonResponse(["status" => "error", "message" => "bad request"], 400);
     }
