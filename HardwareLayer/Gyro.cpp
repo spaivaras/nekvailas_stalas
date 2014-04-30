@@ -38,6 +38,7 @@ int Gyro::init()
     while (count < RETRY_COUNT && !status) {
         hardware->initialize();
         status = hardware->testConnection();
+		count++;
     }
     
     if (!status) {
@@ -52,6 +53,7 @@ int Gyro::init()
         hardware->setMotionDetectionDuration(MOTION_DURATION_TRESHOLD);
         hardware->setIntMotionEnabled(true);
         status = hardware->getIntMotionEnabled();
+		count++;
     }
     
     if (!status) {
