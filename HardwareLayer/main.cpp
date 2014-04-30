@@ -11,11 +11,13 @@
 #include "I2Cdev.h"
 #include "TableEventsQueue.h"
 #include "sleep.h"
+#include "Gyro.h"
 
 
 volatile sig_atomic_t is_it_good_time_to_die = false;
 
 TableEventsQueue Q;
+Gyro gyro (&Q);
 
 uint32_t getUserData(uint8_t address)
 {
@@ -32,7 +34,9 @@ uint32_t getUserData(uint8_t address)
 void userInterrupt(uint8_t id)
 {       
     uint32_t user = getUserData(100 + id);
-    printf("\nGot User: %d %u\n", id, user);
+    if (user == 0) {
+        return;
+    }
 
     uint8_t team = (id & 1<<1 ) >> 1;
     uint8_t player = (id & 1);
@@ -59,6 +63,11 @@ void userInterrupt3()
     return userInterrupt(3);
 }
 
+void motionInterrupt()
+{
+    return gyro.motionInterrupt();
+}
+
 int setupInterrupts()
 {
     int status = wiringPiSetup();
@@ -67,10 +76,12 @@ int setupInterrupts()
         return -1;
     }
     
-    wiringPiISR (7, INT_EDGE_RISING, &userInterrupt0);
-    wiringPiISR (0, INT_EDGE_RISING, &userInterrupt1);
-    wiringPiISR (2, INT_EDGE_RISING, &userInterrupt2);
-    wiringPiISR (3, INT_EDGE_RISING, &userInterrupt3);
+    wiringPiISR (READER_0_INTERRUPT_PIN, INT_EDGE_RISING, &userInterrupt0);
+    wiringPiISR (READER_1_INTERRUPT_PIN, INT_EDGE_RISING, &userInterrupt1);
+    wiringPiISR (READER_2_INTERRUPT_PIN, INT_EDGE_RISING, &userInterrupt2);
+    wiringPiISR (READER_3_INTERRUPT_PIN, INT_EDGE_RISING, &userInterrupt3);
+    
+    wiringPiISR (MOTION_INTERRUPT_PIN, INT_EDGE_RISING, &motionInterrupt);
 
     return 0;
 }
@@ -87,25 +98,28 @@ void setupSignals() {
 }
 
 int main() {
-	printf("I'm working hard, give me a break!ok?\n");
+    int status = 0;
+    printf("I'm working hard, give me a break!ok?\n");
+    setupSignals();
+    
+    printf("Init gyro...\n");
+    status = gyro.init();
+    if (status < 0) {
+        printf("Gyro init failed\n");
+        return -1;
+    }
+    
+    printf("Interrupts setup...\n");
+    if (setupInterrupts() < 0) {
+        return -1;
+    }
+    
+    while(!is_it_good_time_to_die){
+        msleep(10);
+    }
 
-	setupSignals();
-
-	if (setupInterrupts() < 0) {
-		return -1;
-	}
-
-	Q.addTableShakeEvent();
-	Q.addTableShakeEvent(9999);
-	Q.addCardSwipeEvent(1,2,123456789);
-
-
-	while(!is_it_good_time_to_die){
-		msleep(10);
-	}
-
-	printf("I made peace with myself. Now I`m ready to return from main loop...\n");
+    printf("I made peace with myself. Now I`m ready to return from main loop...\n");
  
-	return 0;
+    return 0;
 }
 

@@ -1,5 +1,5 @@
 BIN=hl
-SRC=main.cpp I2Cdev.cpp TableEventsQueue.cpp EventsPusher.cpp sleep.cpp
+SRC=main.cpp I2Cdev.cpp TableEventsQueue.cpp EventsPusher.cpp sleep.cpp MPU6050.cpp Gyro.cpp
 OBJDIR=obj
 OBJ=$(patsubst %,$(OBJDIR)/%,$(SRC:.cpp=.o))
 CC=g++
