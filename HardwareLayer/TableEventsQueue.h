@@ -20,6 +20,7 @@ class TableEventsQueue {
 		void addTableShakeEvent();
 		void addTableShakeEvent(uint32_t power);
 		void addCardSwipeEvent(uint8_t team, uint8_t player, uint32_t card_id);
+		void addAutoGoalEvent(uint8_t team);
 	private:
 		void addEvent(const char* type, const char* payload);
 		void sendMessage(const char* message);

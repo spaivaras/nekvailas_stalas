@@ -68,6 +68,31 @@ void motionInterrupt()
     return gyro.motionInterrupt();
 }
 
+
+void goalInterrupt(uint8_t team) {
+	Q.addAutoGoalEvent(team);
+}
+void goalInterrupt0()
+{
+    return goalInterrupt(0);
+}
+void goalInterrupt1()
+{
+    return goalInterrupt(1);
+}
+void goalInterrupt2()
+{
+    return goalInterrupt(0);
+}
+
+void goalInterrupt3()
+{
+    return goalInterrupt(1);
+}
+
+
+
+
 int setupInterrupts()
 {
     int status = wiringPiSetup();
@@ -82,6 +107,11 @@ int setupInterrupts()
     wiringPiISR (READER_3_INTERRUPT_PIN, INT_EDGE_RISING, &userInterrupt3);
     
     wiringPiISR (MOTION_INTERRUPT_PIN, INT_EDGE_RISING, &motionInterrupt);
+
+    wiringPiISR (GOAL_0_INTERRUPT_PIN, INT_EDGE_RISING, &goalInterrupt0);
+    wiringPiISR (GOAL_1_INTERRUPT_PIN, INT_EDGE_RISING, &goalInterrupt1);
+    wiringPiISR (GOAL_2_INTERRUPT_PIN, INT_EDGE_RISING, &goalInterrupt2);
+    wiringPiISR (GOAL_3_INTERRUPT_PIN, INT_EDGE_RISING, &goalInterrupt3);
 
     return 0;
 }

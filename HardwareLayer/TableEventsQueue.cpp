@@ -43,6 +43,12 @@ void TableEventsQueue::addCardSwipeEvent(uint8_t team, uint8_t player, uint32_t 
 	addEvent("CardSwipe", payload);
 }
 
+void TableEventsQueue::addAutoGoalEvent(uint8_t team) {
+	char payload[128];
+	sprintf(payload, "{\"team\":%u}", team);
+	addEvent("AutoGoal", payload);
+}
+
 void TableEventsQueue::addEvent(const char* type, const char* payload) {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
