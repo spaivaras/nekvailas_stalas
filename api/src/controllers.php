@@ -83,10 +83,10 @@ $app->post('/kickertable/api/v1/event', function (Request $request) use ($app) {
     }
 
     $aData = array(
-        "timeSec"   => $data['time']['sec'],
-        "usec"      => $data['time']['usec'],
-        "type"      => $data['type'],
-        "data"      => json_encode($data['data'])
+        "timeSec"   => $data[0]['time']['sec'],
+        "usec"      => $data[0]['time']['usec'],
+        "type"      => $data[0]['type'],
+        "data"      => json_encode($data[0]['data'])
     );
 
     if ($app['db']->insert('kickertable', $aData)) {
