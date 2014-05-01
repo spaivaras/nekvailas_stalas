@@ -22,10 +22,15 @@ $app->get('/kickertable/', function () use ($app) {
  * @return JsonResponse
  */
 
-$app->get('/kickertable/api/v1/status', function () {
-    // @todo
-    // get status from DB or file
-    return new JsonResponse(["status" => "ok", "message" => "table free"]);
+$app->get('/kickertable/api/v1/status', function () use ($app) {
+    $timeFrame = 50;
+    $sql = "SELECT count(id) as motionsCount FROM kickertable WHERE timeSec > (UNIX_TIMESTAMP() - $timeFrame) and timeSec < UNIX_TIMESTAMP()";
+    $motionsCount = $app['db']->fetchColumn($sql);
+    if ($motionsCount) {
+        return new JsonResponse(["status" => "ok", "message" => "table taken $motionsCount"]);
+    }
+
+    return new JsonResponse(["status" => "ok", "message" => "table free $motionsCount"]);
 });
 
 /**
@@ -68,17 +73,25 @@ $app->get('/kickertable/api/v1/events', function () {
  * @return JsonResponse
  */
 $app->post('/kickertable/api/v1/event', function (Request $request) use ($app) {
-    if (!$data = $request->request->all()) {
-        return new JsonResponse(["status" => "error", "message" => "bad request"], 400);
-    }
 
-    // @todo
-    // do something with data from pusher
-    // e.g. save to DB
-    //
     // example data:
     // {"time":{"sec":1398619851,"usec":844563},"type":"TableShake","data":{}}
     // {"time":{"sec":1398619851,"usec":847409},"type":"CardSwipe","data":{"team":1,"player":2,"card_id":123456789}}
 
-    return new JsonResponse(["status" => "ok"], 200, ["X-TableEventStored" => "1"]);
+    if (!$data = $request->request->all()) {
+        return new JsonResponse(["status" => "error", "message" => "bad request"], 400);
+    }
+
+    $aData = array(
+        "timeSec"   => $data['time']['sec'],
+        "usec"      => $data['time']['usec'],
+        "type"      => $data['type'],
+        "data"      => json_encode($data['data'])
+    );
+
+    if ($app['db']->insert('kickertable', $aData)) {
+        return new JsonResponse(["status" => "ok"], 200, ["X-TableEventStored" => "1"]);
+    }
+
+    return new JsonResponse(["status" => "error", "message" => "db insert error"], 400);
 });
