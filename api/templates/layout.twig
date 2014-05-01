@@ -1,14 +1,19 @@
 <!DOCTYPE html>
-<html dir="ltr" lang="en-US">
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
     {% block head %}
-        <meta charset="UTF-8" />
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>{% block title %}table status{% endblock %}</title>
-        <meta name="description" content="{% block description %}{% endblock %}"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <meta name="description" content="{% block description %}{% endblock %}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/main.css">
     {% endblock %}
 </head>
-
 <body>
 
     <div id="wrap">
@@ -16,6 +21,7 @@
     </div>
 
     <script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js'></script>
+    <script src="js/vendor/modernizr-2.6.2.min.js"></script>
     {% block javascript %}{% endblock %}
 
 </body>
