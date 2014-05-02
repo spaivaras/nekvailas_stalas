@@ -24,6 +24,9 @@
 #define GOAL_2_INTERRUPT_PIN 4
 #define GOAL_3_INTERRUPT_PIN 5
 
+//Beeping
+#define BEEPER_PIN 6
+#define BEEPER_DELAY_MS 60 
 
 #endif
 
