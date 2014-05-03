@@ -3,6 +3,7 @@
 #include <stdlib.h> // NULL
 #include <sys/time.h> // gettimeofday
 #include <sys/msg.h> // msgget msgsnd ...
+#include "logger.h"
 #include "TableEventsQueue.h"
 #include "EventsPusher.h"
 
@@ -11,9 +12,9 @@ TableEventsQueue::TableEventsQueue() {
 	// setup msgq
 	msgq_id = msgget(MSG_KEY, MSG_PERM|IPC_CREAT);
 	if (msgq_id < 0) {
-		printf("failed to create message queue with msgqid = %d\n", msgq_id);
+		ERR("failed to create message queue with msgqid = %d", msgq_id);
 	}
-	printf("TableEventQueue - constructed: %d\n", msgq_id);
+	INFO("TableEventQueue - constructed: %d", msgq_id);
 	pusher = new EventsPusher(MSG_KEY);
 }
 
@@ -21,9 +22,9 @@ TableEventsQueue::~TableEventsQueue() {
 	// destroy msgq
 	int return_code = msgctl(msgq_id, IPC_RMID, NULL);
 	if (return_code < 0) {
-		printf("msgctl (return queue) failed, return_code=%d\n", return_code);
+		ERR("msgctl (return queue) failed, return_code=%d", return_code);
 	}
-	printf("TableEventsQueue - destructed: %d\n", msgq_id);
+	INFO("TableEventsQueue - destructed: %d", msgq_id);
 }
 
 void TableEventsQueue::addTableShakeEvent() {
@@ -59,14 +60,14 @@ void TableEventsQueue::addEvent(const char* type, const char* payload) {
 }
 
 void TableEventsQueue::sendMessage(const char* message) {
-	printf("%s\n",message);
+	DEBUG("Sending message: %s",message);
 
 	msg.mtype = MSG_TYPE;
 	sprintf(msg.mtext, message);
 	int return_code = msgsnd(msgq_id, &msg, sizeof(msg.mtext), IPC_NOWAIT); 
 
 	if (return_code < 0) {
-		printf("msgsnd failed, return_code = %d\n", return_code);
+		ERR("msgsnd failed, return_code = %d", return_code);
 	}
 }
 

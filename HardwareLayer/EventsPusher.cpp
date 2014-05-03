@@ -7,6 +7,7 @@
 #include <sys/msg.h> // msgget msgsnd ...
 #include <pthread.h>
 #include <curl/curl.h>
+#include "logger.h"
 #include "EventsPusher.h"
 
 
@@ -16,9 +17,9 @@ EventsPusher::EventsPusher(int msg_key) {
 	// setup msgq
 	msgq_id = msgget(MSG_KEY, MSG_PERM|IPC_CREAT);
 	if (msgq_id < 0) {
-		printf("failed to create message queue with msgqid = %d\n", msgq_id);
+		ERR("failed to create message queue with msgqid = %d", msgq_id);
 	}
-	printf("pusher constructed: %d\n", msgq_id);
+	INFO("pusher constructed: %d", msgq_id);
 
 	// fire up pusher thread
 	int return_code = pthread_create( 
@@ -29,9 +30,9 @@ EventsPusher::EventsPusher(int msg_key) {
 	);
 	if(return_code < 0)
 	{
-		printf("Error - pthread_create() return code: %d\n", return_code);
+		ERR("Error - pthread_create() return code: %d", return_code);
 	}
-	printf("pusher thread constructed: %lu\n", pusher_thread);
+	INFO("pusher thread constructed: %lu", pusher_thread);
 }
 
 EventsPusher::~EventsPusher() {
@@ -41,11 +42,11 @@ EventsPusher::~EventsPusher() {
 	if(curl_buffer.memory)
 		free(curl_buffer.memory);
 
-	printf("destructing pusher\n");
+	INFO("destructing pusher");
 }
 
 void EventsPusher::pusherThreadEntryPoint() {
-	printf("Pusher Thread got created\n");
+	DEBUG("Pusher Thread got created");
 	char message[MSG_LEN+2];
 	while (true) {
 		readMessage();
@@ -55,18 +56,18 @@ void EventsPusher::pusherThreadEntryPoint() {
 }
 
 int EventsPusher::readMessage() {
-	printf("Pusher thread starts to read...\n");
+	DEBUG("Pusher thread starts to read...");
 	// read the message from queue
 	int return_code = msgrcv(msgq_id, &msg, sizeof(msg.mtext), 0, 0); 
 	if (return_code < 0) {
-		printf("msgrcv failed, return_code=%d\n", return_code);
+		ERR("msgrcv failed, return_code=%d", return_code);
 		return -1;
 	} 
-	printf("received msg: %s\n", msg.mtext);
+	INFO("received msg: %s", msg.mtext);
 	return 0;
 }
 int EventsPusher::pushMessage(char *message) {
-	printf("- - - Its curl time!\n");
+	DEBUG("- - - Its curl time!");
 
 	CURL *curl;
 	CURLcode res;
@@ -97,10 +98,10 @@ int EventsPusher::pushMessage(char *message) {
 		curl_easy_cleanup(curl);
 
 		if(res != CURLE_OK) {
-			printf("curl failed: %s\n", curl_easy_strerror(res));
+			ERR("curl failed: %s", curl_easy_strerror(res));
 			return -1;
 		} else {
-			printf("Got data from server:\n%s", curl_buffer.memory);
+			INFO("Got data from server:\n%s", curl_buffer.memory);
 		}
 	}
 
@@ -123,8 +124,7 @@ size_t EventsPusher::curlCallback(void *chunk, size_t size, size_t nmemb, void *
 
 	mem->memory = (char*)realloc(mem->memory, mem->size + realsize + 1);
 	if(mem->memory == NULL) {
-		/* out of memory! */ 
-		printf("not enough memory (realloc returned NULL)\n");
+		ERR("not enough memory (realloc returned NULL)");
 		return 0;
 	}
 

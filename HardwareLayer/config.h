@@ -4,6 +4,8 @@
 	
 #define PROJECT_NAME "nekvailas_stalas"
 #define REMOTE_API_URL "http://wonderwall/kickertable/api/v1/event"
+#define LOGGER_SYSLOG
+
 
 #define RETRY_COUNT 10
 

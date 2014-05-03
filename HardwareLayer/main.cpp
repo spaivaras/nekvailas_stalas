@@ -8,6 +8,7 @@
 #include <signal.h>
 #include <string.h> // strsignal()
 
+#include "logger.h"
 #include "I2Cdev.h"
 #include "TableEventsQueue.h"
 #include "MorseCoder.h"
@@ -105,7 +106,7 @@ int setupInterruptsAndPins()
 {
     int status = wiringPiSetup();
     if (status < 0) {
-        printf ("Unable to setup wiringPi: %d\n", status);
+        ERR("Unable to setup wiringPi: %d", status);
         return -1;
     }
 
@@ -127,7 +128,7 @@ int setupInterruptsAndPins()
 }
 
 void sigTerminateEntryPoint(int sig) {
-	printf("Terminating on signal(%d) - %s\n", sig, strsignal(sig));
+	NOTICE("Terminating on signal(%d) - %s", sig, strsignal(sig));
 	is_it_good_time_to_die = true;
 }
 void setupSignals() {
@@ -138,18 +139,20 @@ void setupSignals() {
 }
 
 int main() {
-    int status = 0;
-    printf("I'm working hard, give me a break!\n");
+	setlogmask (LOG_UPTO (LOG_DEBUG));
+	openlog(PROJECT_NAME, LOG_PID|LOG_PERROR, LOG_USER);
+	NOTICE("Starting... got into main loop!");
+
     setupSignals();
  
-    printf("Init gyro...\n");
-    status = gyro.init();
+    INFO("Init gyro...");
+    int status = gyro.init();
     if (status < 0) {
-        printf("Gyro init failed\n");
+        ERR("Gyro init failed");
         return -1;
     }
 
-    printf("IO setup...\n");
+    INFO("IO setup...");
     if (setupInterruptsAndPins() < 0) {
         return -1;
     }
@@ -162,8 +165,9 @@ int main() {
 
 	MC->send("out");
 
-    printf("I made peace with myself. Now I`m ready to return from main loop...\n");
- 
+    NOTICE("I made peace with myself. Now I`m ready to return from main loop...");
+ 	closelog();
+
     return 0;
 }
 

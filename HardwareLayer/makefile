@@ -1,9 +1,9 @@
 BIN=hl
-SRC=main.cpp I2Cdev.cpp TableEventsQueue.cpp EventsPusher.cpp sleep.cpp MPU6050.cpp Gyro.cpp MorseCoder.cpp
+SRC=main.cpp I2Cdev.cpp TableEventsQueue.cpp EventsPusher.cpp sleep.cpp MPU6050.cpp Gyro.cpp MorseCoder.cpp logger.cpp
 OBJDIR=obj
 OBJ=$(patsubst %,$(OBJDIR)/%,$(SRC:.cpp=.o))
 CC=g++
-CFLAGS=-pedantic -Wall -g
+CFLAGS=-pedantic -Wall -std=c++0x -g
 LFLAGS=-lwiringPi -lpthread -lcurl
 
 

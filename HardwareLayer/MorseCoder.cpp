@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <string.h>
+#include "logger.h"
 #include "sleep.h"
 #include "MorseCoder.h"
 
@@ -90,9 +91,9 @@ int MorseCoder::sendAsync(const char* message) {
 
 	int rc = pthread_create(&sender_thread, NULL, senderThreadEntryPoint, this);
 	if (rc < 0) {
-		printf("Error - pthread_create() return code: %d\n", rc);
+		ERR("Error - pthread_create() return code: %d", rc);
 	}
-	printf("sender thread constructed: %lu\n", sender_thread);
+	INFO("sender thread constructed: %lu", sender_thread);
 	pthread_detach(sender_thread);
 
 	return 0;
@@ -145,7 +146,7 @@ void MorseCoder::sendLetter(const char letter) {
 				transmitDash();
 				break;
 			default:
-				printf("Got unknown char(%c)\n", code[i]);
+				WARNING("Got unknown char(%c)", code[i]);
 				transmitSymbol(ON,10);
 				transmitSymbol(OFF,10);
 				transmitSymbol(ON,10);
