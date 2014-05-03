@@ -29,8 +29,8 @@ Dependencies
 
     [
     {"time":{"sec":1398619851,"usec":844563},"type":"TableShake","data":{}},
-    {"time":{"sec":1398619851,"usec":846044},"type":"TableShake","data":{"power":9999}},
-    {"time":{"sec":1398619851,"usec":847409},"type":"CardSwipe","data":{"team":1,"player":2,"card_id":123456789}}
+    {"time":{"sec":1398619851,"usec":846044},"type":"AutoGoal","data":{"team":1}},
+    {"time":{"sec":1398619851,"usec":847409},"type":"CardSwipe","data":{"team":0,"player":1,"card_id":123456789}}
     ]
 
 **example remote server code**
