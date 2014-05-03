@@ -35,7 +35,7 @@ MYSQL_USERNAME=$config_db_user
 MYSQL_PASSWORD=$config_db_password
 MYSQL_DATABASE=$config_db_dbname
 MYSQL_TABLE='kickertable'
-MYSQL_TRUNCATE_CMD='TRUNCATE TABLE '$MYSQL_TABLE';'
+MYSQL_TRUNCATE_CMD='DELETE FROM '$MYSQL_TABLE';'
 
 # backup to file
 mysqldump -h $MYSQL_HOST -u $MYSQL_USERNAME -p$MYSQL_PASSWORD --no-create-info --skip-comments $MYSQL_DATABASE $MYSQL_TABLE | gzip > $FILE_GZ
