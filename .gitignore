@@ -4,3 +4,4 @@
 api/vendor/
 api/composer.phar
 api/config.yml
+api/bin/rotate_db.sh
