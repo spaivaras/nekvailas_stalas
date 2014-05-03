@@ -118,8 +118,7 @@ $app->post('/kickertable/api/v1/event', function (Request $request) use ($app) {
     // array of events
     foreach ($data as $event) {
         $app['db']->insert('kickertable', [
-//            "timeSec"   => $event['time']['sec'],
-            "timeSec"   => time(),
+            "timeSec"   => $event['time']['sec'],
             "usec"      => $event['time']['usec'],
             "type"      => $event['type'],
             "data"      => json_encode($event['data'])
