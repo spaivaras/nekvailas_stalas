@@ -23,45 +23,75 @@ $app->get('/kickertable/', function () use ($app) {
  */
 
 $app->get('/kickertable/api/v1/status', function () use ($app) {
-    $timeFrame = 50;
-    $sql = "SELECT count(id) as motionsCount FROM kickertable WHERE timeSec > (UNIX_TIMESTAMP() - $timeFrame) and timeSec < UNIX_TIMESTAMP()";
-    $motionsCount = $app['db']->fetchColumn($sql);
-    if ($motionsCount) {
-        return new JsonResponse(["status" => "ok", "message" => "table taken $motionsCount"]);
+    $gameTimeFrame = 1200; // 60 * 20 = 1200 s = 20 min
+    $idleTimeFrame = 50; // 50 sec
+    $sql = "SELECT timeSec, type, data
+            FROM kickertable
+            WHERE timeSec > (UNIX_TIMESTAMP() - $gameTimeFrame)
+            AND timeSec < UNIX_TIMESTAMP()
+            ORDER BY timeSec";
+    $data = $app['db']->fetchAll($sql);
+
+    if ($data && $data[count($data)-1]['timeSec'] > time() - $idleTimeFrame) {
+        $returnDataEmpty = [];
+        $goals = 0;
+        $players = [
+            0 => 0,
+            1 => 0,
+        ];
+        $teams = [
+            0 => [
+                'players' => $players,
+                'goals' => $goals
+            ],
+            1 => [
+                'players' => $players,
+                'goals' => $goals
+            ]
+        ];
+        $returnDataEmpty['teams'] = $teams;
+
+        $returnData = $returnDataEmpty;
+        foreach ($data as $event) {
+            // check for idle time frame gap
+            // if so reset game
+            if ($event['timeSec'] < time() - $idleTimeFrame) {
+                $returnData = $returnDataEmpty;
+            }
+
+            $eventData = json_decode($event['data']);
+            switch ($event['type']) {
+                case 'CardSwipe':
+                    // check for dublicate users reset user id
+                    if ($returnData['teams'][0]['players'][0] == $eventData->card_id) {
+                        $returnData['teams'][0]['players'][0] = 0;
+                    }
+                    if ($returnData['teams'][0]['players'][1] == $eventData->card_id) {
+                        $returnData['teams'][0]['players'][1] = 0;
+                    }
+                    if ($returnData['teams'][1]['players'][0] == $eventData->card_id) {
+                        $returnData['teams'][1]['players'][0] = 0;
+                    }
+                    if ($returnData['teams'][1]['players'][1] == $eventData->card_id) {
+                        $returnData['teams'][1]['players'][1] = 0;
+                    }
+                    // write user id
+                    $returnData['teams'][$eventData->team]['players'][$eventData->player] = $eventData->card_id;
+                    break;
+                case 'AutoGoal':
+                    $returnData['teams'][$eventData->team]['goals'] += 1;
+                    // if goals eq 10 - reset game
+                    if ($returnData['teams'][$eventData->team]['goals'] >= 10) {
+                        $returnData = $returnDataEmpty;
+                    }
+                    break;
+            }
+        }
+
+        return new JsonResponse(["status" => "ok", "table" => "busy", "data" => $returnData]);
     }
 
-    return new JsonResponse(["status" => "ok", "message" => "table free $motionsCount"]);
-});
-
-/**
- * Get table events.
- *
- * returns table events
- *
- * @return JsonResponse
- */
-$app->get('/kickertable/api/v1/events', function () {
-    // @todo
-    // return events data from DB
-    // sample data
-    $data = [
-        [
-            'timestamp' => 1398619851,
-            'type' => "TableShake",
-            'data' => ''
-        ],
-        [
-            'timestamp' => 1398619851,
-            'type' => "CardSwipe",
-            'data' => [
-                'team' => 1,
-                'player' => 2,
-                'card_id' => 123456789
-            ]
-        ]
-    ];
-
-    return new JsonResponse(["status" => "ok", "data" => $data]);
+    return new JsonResponse(["status" => "ok", "table" => "free"]);
 });
 
 /**
@@ -74,24 +104,27 @@ $app->get('/kickertable/api/v1/events', function () {
  */
 $app->post('/kickertable/api/v1/event', function (Request $request) use ($app) {
 
-    // example data:
-    // {"time":{"sec":1398619851,"usec":844563},"type":"TableShake","data":{}}
-    // {"time":{"sec":1398619851,"usec":847409},"type":"CardSwipe","data":{"team":1,"player":2,"card_id":123456789}}
+    // example data
+    // [
+    // {"time":{"sec":1398619851,"usec":844563},"type":"TableShake","data":{}},
+    // {"time":{"sec":1398619851,"usec":846044},"type":"AutoGoal","data":{"team":1}},
+    // {"time":{"sec":1398619851,"usec":847409},"type":"CardSwipe","data":{"team":0,"player":1,"card_id":123456789}}
+    // ]
 
     if (!$data = $request->request->all()) {
         return new JsonResponse(["status" => "error", "message" => "bad request"], 400);
     }
 
-    $aData = array(
-        "timeSec"   => $data[0]['time']['sec'],
-        "usec"      => $data[0]['time']['usec'],
-        "type"      => $data[0]['type'],
-        "data"      => json_encode($data[0]['data'])
-    );
-
-    if ($app['db']->insert('kickertable', $aData)) {
-        return new JsonResponse(["status" => "ok"], 200, ["X-TableEventStored" => "1"]);
+    // array of events
+    foreach ($data as $event) {
+        $app['db']->insert('kickertable', [
+//            "timeSec"   => $event['time']['sec'],
+            "timeSec"   => time(),
+            "usec"      => $event['time']['usec'],
+            "type"      => $event['type'],
+            "data"      => json_encode($event['data'])
+        ]);
     }
 
-    return new JsonResponse(["status" => "error", "message" => "db insert error"], 400);
+    return new JsonResponse(["status" => "ok"], 200, ["X-TableEventStored" => "1"]);
 });

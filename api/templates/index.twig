@@ -1,7 +1,6 @@
 {% extends "layout.twig" %}
 
 {% block content %}
-    <h1>status</h1>
     <div id="status"></div>
 {% endblock %}
 
@@ -9,8 +8,10 @@
     <script>
         var getStatus = function() {
             $.getJSON( "http://{{ app.request.host }}/kickertable/api/v1/status", function(data) {
-                if (data.status) {
-                    $("#status").html(data.message);
+                if (data.table == 'busy') {
+                    $("#status").html( "busy<br />" + JSON.stringify(data.data) );
+                } else if(data.table == 'free') {
+                    $("#status").html( "free" )
                 }
             })
             .fail(function() {
