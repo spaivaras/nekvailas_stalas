@@ -24,7 +24,7 @@ void  Gyro::motionInterrupt()
     time_t currentMotion = time(NULL);
     
     //Truly no need to flood the heck out of the server
-    if (currentMotion - lastMotion > 1) {
+    if (currentMotion - lastMotion > MOTION_INTERRUPT_DELAY_S) {
         Q->addTableShakeEvent();
         lastMotion = currentMotion;
     }
