@@ -12,7 +12,9 @@ Dependencies
 - Using **libcurl** to submit event to remote server
 
 
-### compile dependencies
+### compile and install
+
+#### getting dependencies
 
     sudo apt-get update
     sudo apt-get install git-core libcurl4-gnutls-dev
@@ -21,6 +23,18 @@ Dependencies
 	./build
 	cd -
 	rm -r /tmp/wiringPi
+
+#### compiling and test running
+
+    make all
+    sudo ./stalasd
+
+#### installing and starting as daemon
+
+    sudo make install
+    sudo service stalasd start
+
+**NOTE:** installed package should start on system boot
 
 
 ## Outgoing data
