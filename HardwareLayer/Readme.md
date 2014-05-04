@@ -36,6 +36,10 @@ Dependencies
 
 **NOTE:** installed package should start on system boot
 
+**NOTE:** In some cases service fails to install/uninstall due to: https://github.com/raspberrypi/linux/issues/530
+
+    sudo apt-get remove wolfram-engine
+
 
 ## Outgoing data
 
