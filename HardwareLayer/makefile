@@ -13,7 +13,6 @@ $(BIN): $(OBJDIR) $(OBJ)
 	$(CC) $(CFLAGS) -o $(BIN) $(OBJ) $(LFLAGS)
 
 $(OBJDIR)/%.o: %.cpp
-	whoami|grep root && { echo "\nHey bro! You ain't no compiling as root, are you? are you?!\n"; exit 1; }
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 
