@@ -24,8 +24,8 @@ $app->get('/kickertable/', function () use ($app) {
  */
 
 $app->get('/kickertable/api/v1/status', function () use ($app) {
-    $gameTimeFrame = 19000; // 60 * 20 = 1200 s = 20 min
-    $idleTimeFrame = 9000; // 50 sec
+    $gameTimeFrame = 1200; // 60 * 20 = 1200 s = 20 min
+    $idleTimeFrame = 50; // 50 sec
     $sql = "SELECT timeSec, type, data
             FROM kickertable
             WHERE timeSec > (UNIX_TIMESTAMP() - $gameTimeFrame)
