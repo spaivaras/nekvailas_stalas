@@ -1,23 +1,85 @@
 {% extends "layout.twig" %}
 
 {% block content %}
+    <div id="kicker-table">
+        <img src="web/img/soccer-field.png" alt="Table free" >
+        <div class="table-free">
+            <img src="web/img/icon-table-free.png" alt="Table free" >
+            <p class="main-line">Stalas laisvas!</p>
+            <p class="subline">Eik ir žaisk</p>
+        </div>
+        <div class="table-busy">
+            <div class="info">
+                <p class="vs">vs.</p>
+                <p class="semicolon">:</p>
+                <p class="img"><img src="web/img/icon-ball.png"></p>
+                <p class="main-line">Ole, Ole, Ole...</p>
+                <p class="subline">vyksta rungtynės!</p>
+            </div>
+            <div class="result"></div>
+            <div class="team-0">
+                <div class="player-0">
+                    <img class="bg" src="web/img/user-placeholder.png">
+                    <img class="img" src="">
+                    <div class="name"></div>
+                </div>
+                <div class="player-1">
+                    <img class="bg" src="web/img/user-placeholder.png">
+                    <img class="img" src="">
+                    <div class="name"></div>
+                </div>
+            </div>
+            <div class="team-1">
+                <div class="player-0">
+                    <img class="bg" src="web/img/user-placeholder.png">
+                    <img class="img" src="">
+                    <div class="name"></div>
+                </div>
+                <div class="player-1">
+                    <img class="bg" src="web/img/user-placeholder.png">
+                    <img class="img" src="">
+                    <div class="name"></div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="status"></div>
 {% endblock %}
 
 {% block javascript %}
     <script>
         var getStatus = function() {
+            $("#kicker-table .table-free").hide();
+            $("#kicker-table .table-busy").hide();
             $.getJSON( "http://{{ app.request.host }}/kickertable/api/v1/status", function(data) {
                 if (data.table == 'busy') {
-                    $("#status").html( "busy<br />" + JSON.stringify(data.data) );
+                    //$("#status").html( "busy<br />" + JSON.stringify(data.data) );
+                    $("#kicker-table .table-free").hide();
+                    $("#kicker-table .table-busy").show();
+
+                    $("#kicker-table .table-busy .result").html(data.data.teams[0].goals + "&nbsp;&nbsp;&nbsp;" + data.data.teams[1].goals);
+
+                    $("#kicker-table .table-busy .team-0 .player-0 .img").attr("src", "web/img/players/" + data.data.teams[0].players[0].img);
+                    $("#kicker-table .table-busy .team-0 .player-0 .name").html(data.data.teams[0].players[0].name);
+                    $("#kicker-table .table-busy .team-0 .player-1 .img").attr("src", "web/img/players/" + data.data.teams[0].players[1].img);
+                    $("#kicker-table .table-busy .team-0 .player-1 .name").html(data.data.teams[0].players[1].name);
+
+                    $("#kicker-table .table-busy .team-1 .player-0 .img").attr("src", "web/img/players/" + data.data.teams[1].players[0].img);
+                    $("#kicker-table .table-busy .team-1 .player-0 .name").html(data.data.teams[1].players[0].name);
+                    $("#kicker-table .table-busy .team-1 .player-1 .img").attr("src", "web/img/players/" + data.data.teams[1].players[1].img);
+                    $("#kicker-table .table-busy .team-1 .player-1 .name").html(data.data.teams[1].players[1].name);
+
                 } else if(data.table == 'free') {
-                    $("#status").html( "free" )
+                    $("#kicker-table .table-busy").hide();
+                    $("#kicker-table .table-free").show();
+                    //$("#status").html( "free" )
                 }
             })
-            .fail(function() {
-                $("#status").html("offline");
-            });
-        }
-        var tid = setInterval(getStatus, 3000);
+                    .fail(function() {
+                        $("#status").html("offline");
+                    });
+            //setTimeout(getStatus, 3000);
+        };
+        getStatus();
     </script>
 {% endblock %}
