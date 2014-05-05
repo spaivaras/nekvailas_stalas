@@ -53,7 +53,6 @@
             $("#kicker-table .table-busy").hide();
             $.getJSON( "http://{{ app.request.host }}/kickertable/api/v1/status", function(data) {
                 if (data.table == 'busy') {
-                    //$("#status").html( "busy<br />" + JSON.stringify(data.data) );
                     $("#kicker-table .table-free").hide();
                     $("#kicker-table .table-busy").show();
 
@@ -72,13 +71,12 @@
                 } else if(data.table == 'free') {
                     $("#kicker-table .table-busy").hide();
                     $("#kicker-table .table-free").show();
-                    //$("#status").html( "free" )
                 }
             })
                     .fail(function() {
                         $("#status").html("offline");
                     });
-            //setTimeout(getStatus, 3000);
+            setTimeout(getStatus, 3000);
         };
         getStatus();
     </script>
