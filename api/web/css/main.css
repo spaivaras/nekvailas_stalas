@@ -109,9 +109,10 @@ body {
 #kicker-table {
     height: 927px;
     color: #ffffff;
-    margin: 230px 0 0 0;
+    margin: 210px auto 0 auto;
     text-align: center;
     position: relative;
+    width: 927px;
 }
 
 #kicker-table .main-line {
@@ -180,13 +181,13 @@ body {
 #kicker-table .table-busy .team-0 {
     position: absolute;
     top: 70px;
-    left: 425px;
+    left:-63px;
 }
 
 #kicker-table .table-busy .team-1 {
     position: absolute;
     top: 70px;
-    left: 1350px;
+    right: -63px;
 }
 
 #kicker-table .table-busy .name {
