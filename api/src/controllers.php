@@ -78,7 +78,11 @@ $app->get('/kickertable/api/v1/status', function () use ($app) {
                         $returnData['teams'][1]['players'][1] = $users["0"];
                     }
                     // write user id
-                    $returnData['teams'][$eventData->team]['players'][$eventData->player] = $users[$eventData->card_id];
+                    if (isset($users[$eventData->card_id])) {
+                        $returnData['teams'][$eventData->team]['players'][$eventData->player] = $users[$eventData->card_id];
+                    } else {
+                        $returnData['teams'][$eventData->team]['players'][$eventData->player] = $users["1"];
+                    }
                     break;
                 case 'AutoGoal':
                     $returnData['teams'][$eventData->team]['goals'] += 1;
