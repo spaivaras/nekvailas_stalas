@@ -45,32 +45,30 @@ uint32_t getUserData(uint8_t address) {
            buffer[3];    
 }
 
-void userInterrupt(uint8_t id) {       
+void userInterrupt(uint8_t id, uint8_t player, uint8_t team) {       
     uint32_t user = getUserData(100 + id);
     if (user == 0) {
         return;
     }
 
-    uint8_t team = (id & 1<<1 ) >> 1;
-    uint8_t player = (id & 1);
     Q.addCardSwipeEvent(team, player, user);
     MC->sendAsync("T");
 }
 
 void userInterrupt0() {
-    return userInterrupt(0);
+    return userInterrupt(0, 0, 0);
 }
 
 void userInterrupt1() {
-    return userInterrupt(1);
+    return userInterrupt(1, 1, 1);
 }
 
 void userInterrupt2() {
-    return userInterrupt(2);
+    return userInterrupt(2, 1, 0);
 }
 
 void userInterrupt3() {
-    return userInterrupt(3);
+    return userInterrupt(3, 0, 1);
 }
 
 void goalInterrupt(uint8_t team, time_t *goalKeeper) {
