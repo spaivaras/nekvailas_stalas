@@ -49,8 +49,6 @@
 {% block javascript %}
     <script>
         var getStatus = function() {
-            $("#kicker-table .table-free").hide();
-            $("#kicker-table .table-busy").hide();
             $.getJSON( "http://{{ app.request.host }}/kickertable/api/v1/status", function(data) {
                 if (data.table == 'busy') {
                     $("#kicker-table .table-free").hide();
@@ -73,9 +71,11 @@
                     $("#kicker-table .table-free").show();
                 }
             })
-                    .fail(function() {
-                        $("#status").html("offline");
-                    });
+                .fail(function() {
+                    $("#kicker-table .table-free").hide();
+                    $("#kicker-table .table-busy").hide();
+                    $("#status").html("offline");
+                });
             setTimeout(getStatus, 3000);
         };
         getStatus();

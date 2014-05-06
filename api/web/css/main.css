@@ -127,10 +127,15 @@ body {
 }
 
 #kicker-table .table-free {
+    display: none;
     position: absolute;
     top: 240px;
     left: 0;
     right: 0;
+}
+
+#kicker-table .table-busy {
+    display: none;
 }
 
 #kicker-table .table-busy .result {
