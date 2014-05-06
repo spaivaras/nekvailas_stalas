@@ -198,6 +198,7 @@ body {
     -moz-border-radius: 20px;
     border-radius: 20px;
     background-color:#FFFFFF;
+    padding:5px 0;
 }
 
 #kicker-table .table-busy .team-0 .player-0,
