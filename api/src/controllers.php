@@ -77,7 +77,8 @@ $app->get('/kickertable/api/v1/status', function () use ($app) {
                     }
                     // write user id
                     if (isset($users[$eventData->card_id])) {
-                        $returnData['teams'][$eventData->team]['players'][$eventData->player] = $users[$eventData->card_id];
+                        $returnData['teams'][$eventData->team]['players'][$eventData->player] =
+                            $users[$eventData->card_id];
                     } else {
                         $returnData['teams'][$eventData->team]['players'][$eventData->player] = $users["1"];
                     }
@@ -87,12 +88,15 @@ $app->get('/kickertable/api/v1/status', function () use ($app) {
                     // if goals eq 10 - reset game
                     if ($returnData['teams'][$eventData->team]['goals'] > 10) {
                         $returnData = $returnDataEmpty;
-                        $app['db']->insert('kickertable',[
+                        $app['db']->insert(
+                            'kickertable',
+                            [
                                 "timeSec"   => $event['timeSec']-1,
                                 "usec"      => 0,
                                 "type"      => "TableReset",
                                 "data"      => "[]"
-                            ]);
+                            ]
+                        );
                     }
                     break;
             }
@@ -134,38 +138,28 @@ $app->post('/kickertable/api/v1/event', function (Request $request) use ($app) {
     $count = $app['db']->fetchColumn($sql);
 
     if (!$count) {
-        $app['db']->insert('kickertable',[
-            "timeSec"   => $data[0]['time']['sec']-1,
-            "usec"      => $data[0]['time']['usec'],
-            "type"      => "TableReset",
-            "data"      => "[]"
-        ]);
+        $app['db']->insert(
+            'kickertable',
+            [
+                "timeSec"   => $data[0]['time']['sec']-1,
+                "usec"      => $data[0]['time']['usec'],
+                "type"      => "TableReset",
+                "data"      => "[]"
+            ]
+        );
     }
 
     // array of events
     foreach ($data as $event) {
-//        if ($event['type'] == 'AutoGoal') {
-//            $sql = "SELECT count(*) as `count`
-//            FROM kickertable
-//            WHERE timeSec > (SELECT MAX(timeSec) FROM kickertable WHERE type = 'TableReset')
-//            AND type = 'AutoGoal'";
-//            $goalCount = $app['db']->fetchColumn($sql);
-//            if ($goalCount == 10) {
-//                $app['db']->insert('kickertable',[
-//                    "timeSec"   => $event['time']['sec']+1,
-//                    "usec"      => $event['time']['usec'],
-//                    "type"      => "TableReset",
-//                    "data"      => "[]"
-//                ]);
-//            }
-//        }
-
-        $app['db']->insert('kickertable', [
-            "timeSec"   => $event['time']['sec'],
-            "usec"      => $event['time']['usec'],
-            "type"      => $event['type'],
-            "data"      => json_encode($event['data'])
-        ]);
+        $app['db']->insert(
+            'kickertable',
+            [
+                "timeSec"   => $event['time']['sec'],
+                "usec"      => $event['time']['usec'],
+                "type"      => $event['type'],
+                "data"      => json_encode($event['data'])
+            ]
+        );
     }
 
     return new JsonResponse(["status" => "ok"], 200, ["X-TableEventStored" => "1"]);
