@@ -42,6 +42,23 @@
                 </div>
             </div>
         </div>
+        <div class="table-winner">
+            <div class="winner-text">Game winners</div>
+            <img src="web/img/hor-connector-lines.png">
+            <div class="players">
+                <div class="player-0">
+                    <img class="bg" src="web/img/user-placeholder.png">
+                    <img class="img" src="">
+                    <div class="name"></div>
+                </div>
+                <div class="player-1">
+                    <img class="bg" src="web/img/user-placeholder.png">
+                    <img class="img" src="">
+                    <div class="name"></div>
+                </div>
+                <div class="after">&nbsp;</div>
+            </div>
+        </div>
     </div>
     <div id="status"></div>
 {% endblock %}
@@ -53,8 +70,10 @@
                 if (data.table == 'busy') {
                     $("#kicker-table .table-free").hide();
                     $("#kicker-table .table-busy").show();
-
-                    $("#kicker-table .table-busy .result").html(data.data.teams[0].goals + "&nbsp;&nbsp;&nbsp;" + data.data.teams[1].goals);
+                    $("#kicker-table .table-winner").hide();
+                    var team0Goal = data.data.teams[0].goals;
+                    var team1Goal = data.data.teams[1].goals;
+                    $("#kicker-table .table-busy .result").html(team0Goal + "&nbsp;&nbsp;&nbsp;" + team1Goal);
 
                     $("#kicker-table .table-busy .team-0 .player-0 .img").attr("src", "web/img/players/" + data.data.teams[0].players[0].img);
                     $("#kicker-table .table-busy .team-0 .player-0 .name").html(data.data.teams[0].players[0].name);
@@ -65,15 +84,25 @@
                     $("#kicker-table .table-busy .team-1 .player-0 .name").html(data.data.teams[1].players[0].name);
                     $("#kicker-table .table-busy .team-1 .player-1 .img").attr("src", "web/img/players/" + data.data.teams[1].players[1].img);
                     $("#kicker-table .table-busy .team-1 .player-1 .name").html(data.data.teams[1].players[1].name);
-
+                    if (team0Goal >= 10 || team1Goal >= 10) {
+                        var winner = team0Goal > team1Goal ? 0 : 1;
+                        $("#kicker-table .table-busy").hide();
+                        $("#kicker-table .table-winner").show();
+                        $("#kicker-table .table-winner .players .player-0 .img").attr("src", "web/img/players/" + data.data.teams[winner].players[0].img);
+                        $("#kicker-table .table-winner .players .player-0 .name").html(data.data.teams[winner].players[0].name);
+                        $("#kicker-table .table-winner .players .player-1 .img").attr("src", "web/img/players/" + data.data.teams[winner].players[1].img);
+                        $("#kicker-table .table-winner .players .player-1 .name").html(data.data.teams[winner].players[1].name);
+                    }
                 } else if(data.table == 'free') {
                     $("#kicker-table .table-busy").hide();
+                    $("#kicker-table .table-winner").hide();
                     $("#kicker-table .table-free").show();
                 }
             })
                 .fail(function() {
                     $("#kicker-table .table-free").hide();
                     $("#kicker-table .table-busy").hide();
+                    $("#kicker-table .table-winner").hide();
                     $("#status").html("offline");
                 });
             setTimeout(getStatus, 300);

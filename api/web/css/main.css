@@ -224,6 +224,47 @@ body {
     margin: 75px 0 0 0;
 }
 
+#kicker-table .table-winner {
+    display: none;
+    margin: 100px auto 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+#kicker-table .table-winner .winner-text {
+    font-weight: 700;
+    font-size: 100px;
+}
+
+#kicker-table .table-winner .players {
+    width: 359px;
+    margin: 20px auto 0;
+}
+
+#kicker-table .table-winner .players .after {
+    clear: both;
+}
+
+#kicker-table .table-winner .players .player-0 {
+    float: left;
+    position: relative;
+}
+
+#kicker-table .table-winner .players .player-1 {
+    float: right;
+    position: relative;
+
+}
+
+#kicker-table .table-winner .players .player-0 .img,
+#kicker-table .table-winner .players .player-1 .img {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+}
+
 .control-app{
 	background: #555;
 	margin: 30px;
