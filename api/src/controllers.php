@@ -2,6 +2,7 @@
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Main page to say hello and show table status via json api
@@ -33,11 +34,12 @@ $app->get('/kickertable/api/v1/status', function () use ($app) {
     $data = $app['db']->fetchAll($sql);
 
     if ($data && $data[count($data)-1]['timeSec'] > time() - $idleTimeFrame) {
+        $users = Yaml::parse(__DIR__."/users.yml");
         $returnDataEmpty = [];
         $goals = 0;
         $players = [
-            0 => 0,
-            1 => 0,
+            0 => $users["0"],
+            1 => $users["0"],
         ];
         $teams = [
             0 => [
@@ -63,20 +65,24 @@ $app->get('/kickertable/api/v1/status', function () use ($app) {
             switch ($event['type']) {
                 case 'CardSwipe':
                     // check for dublicate users reset user id
-                    if ($returnData['teams'][0]['players'][0] == $eventData->card_id) {
-                        $returnData['teams'][0]['players'][0] = 0;
+                    if ($returnData['teams'][0]['players'][0] == $users[$eventData->card_id]) {
+                        $returnData['teams'][0]['players'][0] = $users["0"];
                     }
-                    if ($returnData['teams'][0]['players'][1] == $eventData->card_id) {
-                        $returnData['teams'][0]['players'][1] = 0;
+                    if ($returnData['teams'][0]['players'][1] == $users[$eventData->card_id]) {
+                        $returnData['teams'][0]['players'][1] = $users["0"];
                     }
-                    if ($returnData['teams'][1]['players'][0] == $eventData->card_id) {
-                        $returnData['teams'][1]['players'][0] = 0;
+                    if ($returnData['teams'][1]['players'][0] == $users[$eventData->card_id]) {
+                        $returnData['teams'][1]['players'][0] = $users["0"];
                     }
-                    if ($returnData['teams'][1]['players'][1] == $eventData->card_id) {
-                        $returnData['teams'][1]['players'][1] = 0;
+                    if ($returnData['teams'][1]['players'][1] == $users[$eventData->card_id]) {
+                        $returnData['teams'][1]['players'][1] = $users["0"];
                     }
                     // write user id
-                    $returnData['teams'][$eventData->team]['players'][$eventData->player] = $eventData->card_id;
+                    if (isset($users[$eventData->card_id])) {
+                        $returnData['teams'][$eventData->team]['players'][$eventData->player] = $users[$eventData->card_id];
+                    } else {
+                        $returnData['teams'][$eventData->team]['players'][$eventData->player] = $users["1"];
+                    }
                     break;
                 case 'AutoGoal':
                     $returnData['teams'][$eventData->team]['goals'] += 1;

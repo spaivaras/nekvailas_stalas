@@ -102,8 +102,119 @@ textarea {
 
 
 body {
-	background: #ff8200;
-	font-family: 'Dosis', sans-serif;
+	background: #61C483;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+#kicker-table {
+    height: 927px;
+    color: #ffffff;
+    margin: 230px 0 0 0;
+    text-align: center;
+    position: relative;
+}
+
+#kicker-table .main-line {
+    font-weight: 700;
+    font-size: 48px;
+    margin: 18px 0 0 0;
+}
+
+#kicker-table .subline {
+    font-weight: 300;
+    font-size: 24px;
+    margin: 0;
+}
+
+#kicker-table .table-free {
+    position: absolute;
+    top: 240px;
+    left: 0;
+    right: 0;
+}
+
+#kicker-table .table-busy .result {
+    font-weight: 700;
+    font-size: 288px;
+    position: absolute;
+    top: 66px;
+    left: 0;
+    right: 0;
+}
+
+#kicker-table .table-busy .info {
+    position: absolute;
+    top: 66px;
+    left: 0;
+    right: 0;
+}
+
+#kicker-table .table-busy .info p {
+    margin: 0;
+}
+
+#kicker-table .table-busy .info .vs {
+    font-weight: 700;
+    font-size: 48px;
+    margin: 36px 0 0 0 ;
+}
+
+#kicker-table .table-busy .info .semicolon {
+    font-weight: 700;
+    font-size: 160px;
+}
+
+#kicker-table .table-busy .info .img {
+    margin: 145px 0 0 0;
+}
+
+#kicker-table .table-busy .info .main-line {
+    margin: 10px 0 0 0;
+}
+
+#kicker-table .table-busy .team-0 {
+    position: absolute;
+    top: 70px;
+    left: 425px;
+}
+
+#kicker-table .table-busy .team-1 {
+    position: absolute;
+    top: 70px;
+    left: 1350px;
+}
+
+#kicker-table .table-busy .name {
+    font-weight: 600;
+    font-size: 14px;
+    margin: 15px 0 0 0;
+    color: #000000;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+    background-color:#FFFFFF;
+}
+
+#kicker-table .table-busy .team-0 .player-0,
+#kicker-table .table-busy .team-0 .player-1,
+#kicker-table .table-busy .team-1 .player-0,
+#kicker-table .table-busy .team-1 .player-1 {
+    position: relative;
+}
+
+#kicker-table .table-busy .team-0 .player-0 .img,
+#kicker-table .table-busy .team-0 .player-1 .img,
+#kicker-table .table-busy .team-1 .player-0 .img,
+#kicker-table .table-busy .team-1 .player-1 .img
+{
+    position: absolute;
+    top: 8px;
+    left: 8px;
+}
+
+#kicker-table .table-busy .team-0 .player-1,
+#kicker-table .table-busy .team-1 .player-1 {
+    margin: 75px 0 0 0;
 }
 
 .control-app{
