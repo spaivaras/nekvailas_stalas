@@ -87,6 +87,12 @@ $app->get('/kickertable/api/v1/status', function () use ($app) {
                     // if goals eq 10 - reset game
                     if ($returnData['teams'][$eventData->team]['goals'] > 10) {
                         $returnData = $returnDataEmpty;
+                        $app['db']->insert('kickertable',[
+                                "timeSec"   => $event['timeSec']-1,
+                                "usec"      => 0,
+                                "type"      => "TableReset",
+                                "data"      => "[]"
+                            ]);
                     }
                     break;
             }
