@@ -63,24 +63,31 @@ Dependencies
 * return ***X-TableEventStored*** header with value 1 only if data
   was written successfully in a transaction manner. On failure header
   should be returned with negative value.
-* handel empty json arrays ***[]*** by simply returning success header value
-* handel empty event objects ***[{}]*** by ignoring them while proccessing
+* handle empty json arrays ***[]*** by simply returning success header value
+* handle empty event objects ***[{}]*** by ignoring them while processing
   non-empty objects in the same array as expected.
 
 
-Raspberry outputs
+Raspberry Pi pinout
 -------
+### Inputs
+- **P2** - 5V VCC (instead of micro usb)
+- **P6** - GND
+- **P7** - INT RFId Reader 0
+- **P8** - INT MCU6050 Gyro
+- **P10** - INT Photo transistor 0
+- **P11** - INT RFId Reader 1
+- **P12** - INT Photo transistor 1
+- **P13** - INT RFId Reader 2
+- **P15** - INT RFId Reader 3
+
+### Outputs
 - **P1** - 3.3VCC
 - **P3** - SDA
 - **P5** - SCL
-- **P6** - GND
-
-Raspberry inputs
--------
-- **P7** - INT Reader 0
-- **P11** - INT Reader 1
-- **P13** - INT Reader 2
-- **P15** - INT Reader 3
+- **P9** - GND (paired with 3.3V rail)
+- **P20** - GND (paired with beeper)
+- **P22** - Beeper
 
 ---
 **Thanks to:**
