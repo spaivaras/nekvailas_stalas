@@ -131,12 +131,29 @@ $app->post('/kickertable/api/v1/event', function (Request $request) use ($app) {
         $app['db']->insert('kickertable',[
             "timeSec"   => $data[0]['time']['sec']-1,
             "usec"      => $data[0]['time']['usec'],
-            "type"      => "TableReset"
+            "type"      => "TableReset",
+            "data"      => "[]"
         ]);
     }
 
     // array of events
     foreach ($data as $event) {
+        if ($event['type'] == 'AutoGoal') {
+            $sql = "SELECT count(*) as `count`
+            FROM kickertable
+            WHERE timeSec > (SELECT MAX(timeSec) FROM kickertable WHERE type = 'TableReset')
+            AND type = 'AutoGoal'";
+            $goalCount = $app['db']->fetchColumn($sql);
+            if ($goalCount == 10) {
+                $app['db']->insert('kickertable',[
+                    "timeSec"   => $event['time']['sec']+1,
+                    "usec"      => $event['time']['usec'],
+                    "type"      => "TableReset",
+                    "data"      => "[]"
+                ]);
+            }
+        }
+
         $app['db']->insert('kickertable', [
             "timeSec"   => $event['time']['sec'],
             "usec"      => $event['time']['usec'],
