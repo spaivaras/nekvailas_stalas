@@ -24,12 +24,10 @@ $app->get('/kickertable/', function () use ($app) {
  */
 
 $app->get('/kickertable/api/v1/status', function () use ($app) {
-    $gameTimeFrame = 1200; // 60 * 20 = 1200 s = 20 min
     $idleTimeFrame = 50; // 50 sec
     $sql = "SELECT timeSec, type, data
             FROM kickertable
-            WHERE timeSec > (UNIX_TIMESTAMP() - $gameTimeFrame)
-            AND timeSec < UNIX_TIMESTAMP()
+            WHERE timeSec > (SELECT MAX(timeSec) FROM kickertable WHERE type = 'TableReset')
             ORDER BY timeSec";
     $data = $app['db']->fetchAll($sql);
 
@@ -57,9 +55,9 @@ $app->get('/kickertable/api/v1/status', function () use ($app) {
         foreach ($data as $event) {
             // check for idle time frame gap
             // if so reset game
-            if ($event['timeSec'] < time() - $idleTimeFrame) {
-                $returnData = $returnDataEmpty;
-            }
+            // if ($event['timeSec'] < time() - $idleTimeFrame) {
+            //     $returnData = $returnDataEmpty;
+            // }
 
             $eventData = json_decode($event['data']);
             switch ($event['type']) {
@@ -87,7 +85,7 @@ $app->get('/kickertable/api/v1/status', function () use ($app) {
                 case 'AutoGoal':
                     $returnData['teams'][$eventData->team]['goals'] += 1;
                     // if goals eq 10 - reset game
-                    if ($returnData['teams'][$eventData->team]['goals'] >= 10) {
+                    if ($returnData['teams'][$eventData->team]['goals'] > 10) {
                         $returnData = $returnDataEmpty;
                     }
                     break;
@@ -121,8 +119,41 @@ $app->post('/kickertable/api/v1/event', function (Request $request) use ($app) {
         return new JsonResponse(["status" => "error", "message" => "bad request"], 400);
     }
 
+    $idleTimeFrame = 50; // 50 sec
+    $sql = "SELECT count(*) as `count`
+            FROM kickertable
+            WHERE timeSec > (UNIX_TIMESTAMP() - $idleTimeFrame)
+            AND timeSec < UNIX_TIMESTAMP()
+            ORDER BY timeSec";
+    $count = $app['db']->fetchColumn($sql);
+
+    if (!$count) {
+        $app['db']->insert('kickertable',[
+            "timeSec"   => $data[0]['time']['sec']-1,
+            "usec"      => $data[0]['time']['usec'],
+            "type"      => "TableReset",
+            "data"      => "[]"
+        ]);
+    }
+
     // array of events
     foreach ($data as $event) {
+//        if ($event['type'] == 'AutoGoal') {
+//            $sql = "SELECT count(*) as `count`
+//            FROM kickertable
+//            WHERE timeSec > (SELECT MAX(timeSec) FROM kickertable WHERE type = 'TableReset')
+//            AND type = 'AutoGoal'";
+//            $goalCount = $app['db']->fetchColumn($sql);
+//            if ($goalCount == 10) {
+//                $app['db']->insert('kickertable',[
+//                    "timeSec"   => $event['time']['sec']+1,
+//                    "usec"      => $event['time']['usec'],
+//                    "type"      => "TableReset",
+//                    "data"      => "[]"
+//                ]);
+//            }
+//        }
+
         $app['db']->insert('kickertable', [
             "timeSec"   => $event['time']['sec'],
             "usec"      => $event['time']['usec'],
