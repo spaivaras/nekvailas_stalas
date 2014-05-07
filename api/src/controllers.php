@@ -86,7 +86,7 @@ $app->get('/kickertable/api/v1/status', function () use ($app) {
                 case 'AutoGoal':
                     $returnData['teams'][$eventData->team]['goals'] += 1;
                     // if goals eq 10 - reset game
-                    if ($returnData['teams'][$eventData->team]['goals'] > 10) {
+                    if ($returnData['teams'][$eventData->team]['goals'] > 3) {
                         $returnData = $returnDataEmpty;
                         $app['db']->insert(
                             'kickertable',

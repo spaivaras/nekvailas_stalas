@@ -92,7 +92,7 @@
                     $("#kicker-table .table-busy .team-1 .player-0 .name").html(data.data.teams[1].players[0].name);
                     $("#kicker-table .table-busy .team-1 .player-1 .img").attr("src", "web/img/players/" + data.data.teams[1].players[1].img);
                     $("#kicker-table .table-busy .team-1 .player-1 .name").html(data.data.teams[1].players[1].name);
-                    if (team0Goal >= 10 || team1Goal >= 10) {
+                    if (team0Goal >= 3 || team1Goal >= 3) {
                         var winner = team0Goal > team1Goal ? 0 : 1;
                         $("#kicker-table .table-busy").hide();
                         $("#kicker-table .table-winner").show();
