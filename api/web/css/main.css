@@ -106,10 +106,13 @@ body {
     font-family: 'Source Sans Pro', sans-serif;
 }
 
+#wrap {
+    padding-top: 200px;
+}
+
 #kicker-table {
-    height: 927px;
     color: #ffffff;
-    margin: 210px auto 0 auto;
+    margin: 0 auto;
     text-align: center;
     position: relative;
     width: 927px;
