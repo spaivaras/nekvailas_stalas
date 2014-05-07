@@ -133,8 +133,7 @@ $app->post('/kickertable/api/v1/event', function (Request $request) use ($app) {
     $sql = "SELECT count(*) as `count`
             FROM kickertable
             WHERE timeSec > (UNIX_TIMESTAMP() - $idleTimeFrame)
-            AND timeSec < UNIX_TIMESTAMP()
-            ORDER BY timeSec";
+            AND timeSec < UNIX_TIMESTAMP()";
     $count = $app['db']->fetchColumn($sql);
 
     if (!$count) {
