@@ -139,6 +139,18 @@ body {
     display: none;
 }
 
+#kicker-table .table-busy .left-connector {
+    left: -125px;
+    position: absolute;
+    top: 170px;
+}
+
+#kicker-table .table-busy .right-connector {
+    right: -125px;
+    position: absolute;
+    top: 170px;
+}
+
 #kicker-table .table-busy .result {
     font-weight: 700;
     font-size: 288px;

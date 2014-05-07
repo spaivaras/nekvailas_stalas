@@ -17,6 +17,7 @@
                 <p class="subline">vyksta rungtynės!</p>
             </div>
             <div class="result"></div>
+            <img class="left-connector" src="web/img/connector-lines-left.png">
             <div class="team-0">
                 <div class="player-0">
                     <img class="bg" src="web/img/user-placeholder.png">
@@ -29,6 +30,7 @@
                     <div class="name"></div>
                 </div>
             </div>
+            <img class="right-connector" src="web/img/connector-lines-right.png">
             <div class="team-1">
                 <div class="player-0">
                     <img class="bg" src="web/img/user-placeholder.png">
@@ -43,6 +45,11 @@
             </div>
         </div>
         <div class="table-winner">
+            <aside id="library">
+                <img src="web/img/nightsky.png" id="nightsky" />
+                <img src="web/img/big-glow.png" id="big-glow" />
+                <img src="web/img/small-glow.png" id="small-glow" />
+            </aside>
             <div class="winner-text">Žaidimo nugalėtojai</div>
             <img src="web/img/hor-connector-lines.png">
             <div class="players">
@@ -65,6 +72,7 @@
 
 {% block javascript %}
     <script>
+        var fireworkTimer = false;
         var getStatus = function() {
             $.getJSON( "http://{{ app.request.host }}/kickertable/api/v1/status", function(data) {
                 if (data.table == 'busy') {
@@ -92,14 +100,19 @@
                         $("#kicker-table .table-winner .players .player-0 .name").html(data.data.teams[winner].players[0].name);
                         $("#kicker-table .table-winner .players .player-1 .img").attr("src", "web/img/players/" + data.data.teams[winner].players[1].img);
                         $("#kicker-table .table-winner .players .player-1 .name").html(data.data.teams[winner].players[1].name);
+                        setFirework();
+                    } else {
+                        terminateFirework();
                     }
                 } else if(data.table == 'free') {
                     $("#kicker-table .table-busy").hide();
                     $("#kicker-table .table-winner").hide();
                     $("#kicker-table .table-free").show();
+                    terminateFirework();
                 }
             })
                 .fail(function() {
+                    terminateFirework();
                     $("#kicker-table .table-free").hide();
                     $("#kicker-table .table-busy").hide();
                     $("#kicker-table .table-winner").hide();
@@ -108,5 +121,18 @@
             setTimeout(getStatus, 300);
         };
         getStatus();
+        var setFirework = function() {
+            if (!fireworkTimer) {
+                $('canvas').show();
+                fireworkTimer = setInterval(Fireworks.createParticle, 3000);
+            }
+        };
+        var terminateFirework = function() {
+            if (fireworkTimer) {
+                $('canvas').hide();
+                window.clearInterval(fireworkTimer);
+                fireworkTimer = false;
+            }
+        };
     </script>
 {% endblock %}

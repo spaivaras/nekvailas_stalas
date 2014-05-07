@@ -12,7 +12,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="http://{{ app.request.host }}/kickertable/web/css/normalize.css">
-        <link rel="stylesheet" href="http://{{ app.request.host }}/kickertable/web/css/main.css?">
+        <link rel="stylesheet" href="http://{{ app.request.host }}/kickertable/web/css/main.css">
+        <link rel="stylesheet" href="http://{{ app.request.host }}/kickertable/web/css/fireworks.css">
     {% endblock %}
 </head>
 <body>
@@ -23,6 +24,8 @@
 
     <script src="http://{{ app.request.host }}/kickertable/web/js/vendor/jquery-1.10.2.min.js"></script>
     <script src="http://{{ app.request.host }}/kickertable/web/js/vendor/modernizr-2.6.2.min.js"></script>
+    <script src="http://{{ app.request.host }}/kickertable/web/js/fireworks.js"></script>
+    <script src="http://{{ app.request.host }}/kickertable/web/js/requestanimframe.js"></script>
     {% block javascript %}{% endblock %}
 
 </body>
