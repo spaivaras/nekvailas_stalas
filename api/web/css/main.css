@@ -106,12 +106,17 @@ body {
     font-family: 'Source Sans Pro', sans-serif;
 }
 
+#wrap {
+    padding-top: 20px;
+}
+
 #kicker-table {
     color: #ffffff;
     margin: 0 auto;
     text-align: center;
     position: relative;
-    width: 927px;
+    width: 1177px;
+    height: 766px;
 }
 
 #kicker-table .main-line {
@@ -139,13 +144,13 @@ body {
 }
 
 #kicker-table .table-busy .left-connector {
-    left: -125px;
+    left: 0;
     position: absolute;
     top: 170px;
 }
 
 #kicker-table .table-busy .right-connector {
-    right: -125px;
+    right: 0;
     position: absolute;
     top: 170px;
 }
@@ -192,13 +197,13 @@ body {
 #kicker-table .table-busy .team-0 {
     position: absolute;
     top: 70px;
-    left:-63px;
+    left: 62px;
 }
 
 #kicker-table .table-busy .team-1 {
     position: absolute;
     top: 70px;
-    right: -63px;
+    right: 62px;
 }
 
 #kicker-table .table-busy .name {
