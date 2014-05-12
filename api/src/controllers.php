@@ -62,6 +62,19 @@ $app->get('/kickertable/api/v1/status', function () use ($app) {
             $eventData = json_decode($event['data']);
             switch ($event['type']) {
                 case 'CardSwipe':
+                    // if goals eq 10 - reset game
+                    if ($returnData['teams'][$eventData->team]['goals'] >= 10 || $returnData['teams'][(1-$eventData->team)]['goals'] >= 10) {
+                        $returnData = $returnDataEmpty;
+                        $app['db']->insert(
+                            'kickertable',
+                            [
+                                "timeSec"   => $event['timeSec']-1,
+                                "usec"      => 0,
+                                "type"      => "TableReset",
+                                "data"      => "[]"
+                            ]
+                        );
+                    }
                     // check for dublicate users reset user id
                     if ($returnData['teams'][0]['players'][0] == $users[$eventData->card_id]) {
                         $returnData['teams'][0]['players'][0] = $users["0"];
@@ -84,9 +97,8 @@ $app->get('/kickertable/api/v1/status', function () use ($app) {
                     }
                     break;
                 case 'AutoGoal':
-                    $returnData['teams'][$eventData->team]['goals'] += 1;
                     // if goals eq 10 - reset game
-                    if ($returnData['teams'][$eventData->team]['goals'] > 10) {
+                    if ($returnData['teams'][$eventData->team]['goals'] >= 10 || $returnData['teams'][(1-$eventData->team)]['goals'] >= 10) {
                         $returnData = $returnDataEmpty;
                         $app['db']->insert(
                             'kickertable',
@@ -98,6 +110,7 @@ $app->get('/kickertable/api/v1/status', function () use ($app) {
                             ]
                         );
                     }
+                    $returnData['teams'][$eventData->team]['goals'] += 1;
                     break;
             }
         }
