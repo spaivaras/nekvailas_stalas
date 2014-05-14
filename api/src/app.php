@@ -16,6 +16,16 @@ $app->register(new TwigServiceProvider(), array(
     'twig.path'    => array(__DIR__.'/../templates'),
 ));
 
+/*
+|---------------------------------------------------------------------------------
+| Register doctrine provider to enable DBAL usage.
+|---------------------------------------------------------------------------------
+*/
+
+$app->register(new \Silex\Provider\DoctrineServiceProvider(), array(
+        'db.options' => include 'config/database.php'
+    ));
+
 $config = Yaml::parse(__DIR__."/../config.yml");
 $app->register(new DoctrineServiceProvider(), array(
     'db.options' => array(
