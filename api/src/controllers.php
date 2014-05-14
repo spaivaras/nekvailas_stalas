@@ -63,7 +63,7 @@ $app->get('/kickertable/api/v1/status', function () use ($app) {
             switch ($event['type']) {
                 case 'CardSwipe':
                     // if goals eq 10 - reset game
-                    if ($returnData['teams'][$eventData->team]['goals'] >= 10 || $returnData['teams'][(1-$eventData->team)]['goals'] >= 10) {
+                    if ($returnData['teams'][0]['goals'] >= 10 || $returnData['teams'][1]['goals'] >= 10) {
                         $returnData = $returnDataEmpty;
                         $app['db']->insert(
                             'kickertable',
@@ -98,7 +98,7 @@ $app->get('/kickertable/api/v1/status', function () use ($app) {
                     break;
                 case 'AutoGoal':
                     // if goals eq 10 - reset game
-                    if ($returnData['teams'][$eventData->team]['goals'] >= 10 || $returnData['teams'][(1-$eventData->team)]['goals'] >= 10) {
+                    if ($returnData['teams'][0]['goals'] >= 10 || $returnData['teams'][1]['goals'] >= 10) {
                         $returnData = $returnDataEmpty;
                         $app['db']->insert(
                             'kickertable',
