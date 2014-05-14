@@ -1,15 +1,20 @@
 <?php
 
-use Silex\Application;
-use Symfony\Component\Yaml\Yaml;
-use Silex\Provider\ServiceControllerServiceProvider;
-use Silex\Provider\DoctrineServiceProvider;
-use Symfony\Component\HttpFoundation\Request;
-use Silex\Provider\TwigServiceProvider;
+//use Silex\Application;
+//use Silex\Provider\ServiceControllerServiceProvider;
+//use Silex\Provider\DoctrineServiceProvider;
+//use Symfony\Component\HttpFoundation\Request;
+//use Silex\Provider\TwigServiceProvider;
 
-date_default_timezone_set('Europe/Vilnius');
+/*
+ * Load configs from default_config.yml and project specific config.yml
+ */
+include 'config/config.php';
 
-$app = new Application();
+/*
+ * Set script timezone
+ */
+date_default_timezone_set($config['timezone']);
 
 $app->register(new ServiceControllerServiceProvider());
 $app->register(new TwigServiceProvider(), array(
@@ -26,7 +31,7 @@ $app->register(new \Silex\Provider\DoctrineServiceProvider(), array(
         'db.options' => include 'config/database.php'
     ));
 
-$config = Yaml::parse(__DIR__."/../config.yml");
+
 $app->register(new DoctrineServiceProvider(), array(
     'db.options' => array(
         'driver'    =>  $config['db']['driver'],
