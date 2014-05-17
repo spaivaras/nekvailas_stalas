@@ -2,31 +2,61 @@
 /**
  * Created by PhpStorm.
  * User: Darius
- * Date: 14.5.13
- * Time: 10.56
+ * Date: 14.5.17
+ * Time: 23.26
  */
+
+namespace Controllers;
+
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Yaml\Yaml;
 
-class ActionService {
+class PageController
+{
 
-    protected $db;
+    /**
+     * @var \Twig_Environment
+     */
+    protected $twig;
 
-    public function __construct($db)
+    protected $app;
+
+    public function __construct($twigService, $app)
     {
-        $this->db = $db;
+        $this->twig = $twigService;
+        $this->app = $app;
     }
-    
-    public function statusAction()
+
+    /**
+     * Main page to say hello and show table status via json api
+     *
+     * @return string
+     */
+    public function index()
+    {
+        return $this->twig->render('index.twig');
+    }
+
+    /**
+     * Get table status.
+     *
+     * returns table status:
+     * status: ok
+     * message: table free|table busy
+     *
+     * @return JsonResponse
+     */
+    public function status()
     {
         $idleTimeFrame = 50; // 50 sec
         $sql = "SELECT timeSec, type, data
             FROM kickertable
             WHERE timeSec > (SELECT MAX(timeSec) FROM kickertable WHERE type = 'TableReset')
             ORDER BY timeSec";
-        $data = $this->db->fetchAll($sql);
+        $data = $this->app['db']->fetchAll($sql);
 
-        if ($data && $data[count($data)-1]['timeSec'] > time() - $idleTimeFrame) {
-            $users = Yaml::parse(__DIR__."/users.yml");
+        if ($data && $data[count($data) - 1]['timeSec'] > time() - $idleTimeFrame) {
+            $users = Yaml::parse(__DIR__ . "/users.yml");
             $returnDataEmpty = [];
             $goals = 0;
             $players = [
@@ -57,15 +87,15 @@ class ActionService {
                 switch ($event['type']) {
                     case 'CardSwipe':
                         // if goals eq 10 - reset game
-                        if ($returnData['teams'][$eventData->team]['goals'] >= 10 || $returnData['teams'][(1-$eventData->team)]['goals'] >= 10) {
+                        if ($returnData['teams'][$eventData->team]['goals'] >= 10 || $returnData['teams'][(1 - $eventData->team)]['goals'] >= 10) {
                             $returnData = $returnDataEmpty;
-                            $app['db']->insert(
+                            $this->app['db']->insert(
                                 'kickertable',
                                 [
-                                    "timeSec"   => $event['timeSec']-1,
-                                    "usec"      => 0,
-                                    "type"      => "TableReset",
-                                    "data"      => "[]"
+                                    "timeSec" => $event['timeSec'] - 1,
+                                    "usec" => 0,
+                                    "type" => "TableReset",
+                                    "data" => "[]"
                                 ]
                             );
                         }
@@ -92,15 +122,15 @@ class ActionService {
                         break;
                     case 'AutoGoal':
                         // if goals eq 10 - reset game
-                        if ($returnData['teams'][$eventData->team]['goals'] >= 10 || $returnData['teams'][(1-$eventData->team)]['goals'] >= 10) {
+                        if ($returnData['teams'][$eventData->team]['goals'] >= 10 || $returnData['teams'][(1 - $eventData->team)]['goals'] >= 10) {
                             $returnData = $returnDataEmpty;
-                            $app['db']->insert(
+                            $this->app['db']->insert(
                                 'kickertable',
                                 [
-                                    "timeSec"   => $event['timeSec']-1,
-                                    "usec"      => 0,
-                                    "type"      => "TableReset",
-                                    "data"      => "[]"
+                                    "timeSec" => $event['timeSec'] - 1,
+                                    "usec" => 0,
+                                    "type" => "TableReset",
+                                    "data" => "[]"
                                 ]
                             );
                         }
@@ -114,5 +144,4 @@ class ActionService {
 
         return new JsonResponse(["status" => "ok", "table" => "free"]);
     }
-
 } 
