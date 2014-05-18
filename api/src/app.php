@@ -8,7 +8,7 @@
 /**
  * Load configs from default_config.yml and project specific config.yml
  */
-include 'config/config.php';
+include 'Config/config.php';
 $app['config'] = $config;
 
 /**

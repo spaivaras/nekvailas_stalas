@@ -26,9 +26,9 @@ SET time_zone = "+00:00";
 -- Table structure for table `kickertable`
 --
 
-CREATE TABLE IF NOT EXISTS `kickertable` (
+CREATE TABLE IF NOT EXISTS `kickertable_event` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `timeSec` varchar(10) NOT NULL,
+  `sec` varchar(10) NOT NULL,
   `usec` varchar(6) NOT NULL,
   `type` varchar(16) NOT NULL,
   `data` text NOT NULL,

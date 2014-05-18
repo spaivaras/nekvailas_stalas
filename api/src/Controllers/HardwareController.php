@@ -8,20 +8,27 @@
 
 namespace Controllers;
 
+use Services\HardwareService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class HardwareController
 {
-    protected $app;
+    /**
+     * @var HardwareService
+     */
+    protected $hardwareService;
 
-    public function __construct($app)
+    /**
+     * @param HardwareService $hardwareService
+     */
+    public function __construct($hardwareService)
     {
-        $this->app = $app;
+        $this->hardwareService = $hardwareService;
     }
 
     /**
-     *  * Save table event from pusher
+     * Save table event from pusher
      *
      * return ok|error status with human readable message
      * on success sets X-TableEventStored: 1 header
@@ -41,37 +48,7 @@ class HardwareController
             return new JsonResponse(["status" => "error", "message" => "bad request"], 400);
         }
 
-        $idleTimeFrame = 50; // 50 sec
-        $sql = "SELECT count(*) as `count`
-            FROM kickertable
-            WHERE timeSec > (UNIX_TIMESTAMP() - $idleTimeFrame)
-            AND timeSec < UNIX_TIMESTAMP()";
-        $count = $this->app['db']->fetchColumn($sql);
-
-        if (!$count) {
-            $this->app['db']->insert(
-                'kickertable',
-                [
-                    "timeSec"   => $data[0]['time']['sec']-1,
-                    "usec"      => $data[0]['time']['usec'],
-                    "type"      => "TableReset",
-                    "data"      => "[]"
-                ]
-            );
-        }
-
-        // array of events
-        foreach ($data as $event) {
-            $this->app['db']->insert(
-                'kickertable',
-                [
-                    "timeSec"   => $event['time']['sec'],
-                    "usec"      => $event['time']['usec'],
-                    "type"      => $event['type'],
-                    "data"      => json_encode($event['data'])
-                ]
-            );
-        }
+        $this->hardwareService->handleEvent($data);
 
         return new JsonResponse(["status" => "ok"], 200, ["X-TableEventStored" => "1"]);
     }

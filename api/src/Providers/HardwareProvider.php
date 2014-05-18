@@ -8,6 +8,8 @@
 namespace Providers;
 
 use Controllers\HardwareController;
+use Repositories\EventRepository;
+use Services\HardwareService;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 
@@ -22,8 +24,8 @@ class HardwareProvider implements ServiceProviderInterface
     {
         $app['hardware.event.register_path'] = '/api/v1/event';
 
-//        $this->registerServices($app);
-//        $this->registerRepositories($app);
+        $this->registerServices($app);
+        $this->registerRepositories($app);
         $this->registerControllers($app);
         $this->registerRoutes($app);
     }
@@ -33,7 +35,6 @@ class HardwareProvider implements ServiceProviderInterface
      */
     public function boot(Application $app)
     {
-
     }
 
     /**
@@ -44,33 +45,12 @@ class HardwareProvider implements ServiceProviderInterface
      */
     protected function registerServices(Application $app)
     {
-//        $app['stock.service'] = $app->share(
-//            function () use ($app) {
-//                $service = new StockService($app['db'], $app['stock.repository']);
-//                $service->setEventDispatcher($app['dispatcher']);
-//                $service->setValidator($app['validator']);
-//                $service->setErrorManager($app['error.manager.service']);
-//                return $service;
-//            }
-//        );
-//
-//        $app['reservation.service'] = $app->share(
-//            function () use ($app) {
-//                $service = new ReservationService($app['reservation.repository']);
-//                $service->setEventDispatcher($app['dispatcher']);
-//                $service->setValidator($app['validator']);
-//                $service->setErrorManager($app['error.manager.service']);
-//                return $service;
-//            }
-//        );
-//
-//        $app['history.service'] = $app->share(
-//            function () use ($app) {
-//                $service = new HistoryService($app['stock.repository']);
-//                $service->setEventDispatcher($app['dispatcher']);
-//                return $service;
-//            }
-//        );
+        $app['hardware.service'] = $app->share(
+            function () use ($app) {
+                $service = new HardwareService($app['event.repository']);
+                return $service;
+            }
+        );
     }
 
     /**
@@ -81,21 +61,12 @@ class HardwareProvider implements ServiceProviderInterface
      */
     protected function registerRepositories(Application $app)
     {
-//        $app['stock.repository'] = $app->share(
-//            function () use ($app) {
-//                $repository = new StockRepository($app['db']);
-//                $repository->setErrorManager($app['error.manager.service']);
-//                return $repository;
-//            }
-//        );
-//
-//        $app['reservation.repository'] = $app->share(
-//            function () use ($app) {
-//                $repository = new ReservationRepository($app['db'], $app['stock.repository']);
-//                $repository->setErrorManager($app['error.manager.service']);
-//                return $repository;
-//            }
-//        );
+        $app['event.repository'] = $app->share(
+            function () use ($app) {
+                $repository = new EventRepository($app['db']);
+                return $repository;
+            }
+        );
     }
 
     /**
@@ -111,12 +82,6 @@ class HardwareProvider implements ServiceProviderInterface
             $app['config']['path_prefix'] . $app['hardware.event.register_path'],
             'hardware.controller:eventRegister'
         );
-
-//// Create new stock entry
-//        $app->post(
-//            $app['stock.options.api_stock_route_prefix'],
-//            'stock.controller:create'
-//        );
     }
 
     /**
@@ -129,26 +94,8 @@ class HardwareProvider implements ServiceProviderInterface
     {
         $app['hardware.controller'] = $app->share(
             function () use ($app) {
-                return new HardwareController($app);
+                return new HardwareController($app['hardware.service']);
             }
         );
-//
-//        $app['reservation.controller'] = $app->share(
-//            function () use ($app) {
-//                return new ReservationController($app['reservation.service'], $app['stock.service']);
-//            }
-//        );
-//
-//        $app['history.controller'] = $app->share(
-//            function () use ($app) {
-//                return new HistoryController($app['history.service']);
-//            }
-//        );
-//
-//        $app['bulk.reservation.controller'] = $app->share(
-//            function () use ($app) {
-//                return new BulkReservationController($app['reservation.service']);
-//            }
-//        );
     }
 }
