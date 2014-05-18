@@ -45,8 +45,7 @@ class HardwareService
 
     protected function checkIsNewGame($requestData)
     {
-        $idleTimeFrame = 50; // 50 sec
-        $count = $this->eventRepository->getActiveEventCount($idleTimeFrame);
+        $count = $this->eventRepository->getActiveEventCount();
 
         //if last $idleTimeFrame second not have event, then it will be new game
         if (!$count) {

@@ -16,6 +16,9 @@ class EventRepository
     const TYPE_GOAL_AUTO = 'AutoGoal';
     const TYPE_CARD_SWIPE = 'CardSwipe';
 
+    //seconds
+    const TIME_IDLE_FRAME = 50;
+
     /**
      * Used DB connection.
      *
@@ -45,15 +48,27 @@ class EventRepository
         $this->connection->insert('kickertable_event', $modelData);
     }
 
-    public function getActiveEventCount($idleTimeFrame)
+    public function getActiveEventCount()
     {
         $sql = "SELECT count(*) as `count`
             FROM kickertable
-            WHERE timeSec > (UNIX_TIMESTAMP() - $idleTimeFrame)
+            WHERE timeSec > (UNIX_TIMESTAMP() - " . self::TIME_IDLE_FRAME . ")
             AND timeSec < UNIX_TIMESTAMP()";
         $count = $this->connection->fetchColumn($sql);
 
         return $count;
+    }
+
+    public function getActiveEvent()
+    {
+        $sql = "SELECT timeSec, type, data
+            FROM kickertable
+            WHERE timeSec > (SELECT MAX(timeSec) FROM kickertable WHERE type = '" . self::TYPE_TABLE_RESET . "')
+            ORDER BY timeSec";
+
+        $data = $this->connection->fetchAll($sql);
+
+        return $data;
     }
 
 } 

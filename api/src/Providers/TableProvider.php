@@ -8,11 +8,12 @@
 
 namespace Providers;
 
-use Controllers\PageController;
+use Controllers\TableController;
+use Services\TableService;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 
-class PageProvider implements ServiceProviderInterface
+class TableProvider implements ServiceProviderInterface
 {
     /**
      * @inherit
@@ -24,6 +25,7 @@ class PageProvider implements ServiceProviderInterface
         $app['page.path.start_page'] = '/';
         $app['page.path.status_json'] = '/api/v1/status';
 
+        $this->registerServices($app);
         $this->registerControllers($app);
         $this->registerRoutes($app);
     }
@@ -33,6 +35,22 @@ class PageProvider implements ServiceProviderInterface
      */
     public function boot(Application $app)
     {
+    }
+
+    /**
+     * Register used services.
+     *
+     * @param Application $app An Application instance
+     * @return void
+     */
+    protected function registerServices(Application $app)
+    {
+        $app['table.service'] = $app->share(
+            function () use ($app) {
+                $service = new TableService($app['event.repository']);
+                return $service;
+            }
+        );
     }
 
     /**
@@ -66,7 +84,7 @@ class PageProvider implements ServiceProviderInterface
     {
         $app['page.controller'] = $app->share(
             function () use ($app) {
-                return new PageController($app['twig'], $app);
+                return new TableController($app['twig'], $app['table.service']);
             }
         );
     }

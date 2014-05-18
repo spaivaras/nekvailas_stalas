@@ -23,7 +23,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kickertable`
+-- Table structure for table `kickertable_event`
 --
 
 CREATE TABLE IF NOT EXISTS `kickertable_event` (
@@ -34,6 +34,16 @@ CREATE TABLE IF NOT EXISTS `kickertable_event` (
   `data` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+--
+-- Table structure for table `kickertable_user`
+--
+
+CREATE TABLE IF NOT EXISTS `kickertable_user` (
+  `id` bigint(20) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

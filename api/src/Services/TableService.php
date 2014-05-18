@@ -2,61 +2,40 @@
 /**
  * Created by PhpStorm.
  * User: Darius
- * Date: 14.5.17
- * Time: 23.26
+ * Date: 14.5.18
+ * Time: 22.44
  */
 
-namespace Controllers;
+namespace Services;
 
+use Repositories\EventRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Yaml\Yaml;
 
-class PageController
+class TableService
 {
+    /**
+     * @var EventRepository
+     */
+    protected $eventRepository;
 
     /**
-     * @var \Twig_Environment
+     * @param EventRepository $eventRepository
      */
-    protected $twig;
-
-    protected $app;
-
-    public function __construct($twigService, $app)
+    public function __construct($eventRepository)
     {
-        $this->twig = $twigService;
-        $this->app = $app;
+        $this->eventRepository = $eventRepository;
     }
 
     /**
-     * Main page to say hello and show table status via json api
-     *
-     * @return string
-     */
-    public function index()
-    {
-        return $this->twig->render('index.twig');
-    }
-
-    /**
-     * Get table status.
-     *
-     * returns table status:
-     * status: ok
-     * message: table free|table busy
-     *
      * @return JsonResponse
      */
-    public function status()
+    public function getTableStatus()
     {
-        $idleTimeFrame = 50; // 50 sec
-        $sql = "SELECT timeSec, type, data
-            FROM kickertable
-            WHERE timeSec > (SELECT MAX(timeSec) FROM kickertable WHERE type = 'TableReset')
-            ORDER BY timeSec";
-        $data = $this->app['db']->fetchAll($sql);
+        $data = $this->eventRepository->getActiveEvent();
 
-        if ($data && $data[count($data) - 1]['timeSec'] > time() - $idleTimeFrame) {
-            $users = Yaml::parse(__DIR__ . "/users.yml");
+        if ($data && $data[count($data) - 1]['timeSec'] > time() - EventRepository::TIME_IDLE_FRAME) {
+            $users = Yaml::parse(__DIR__ . "/../users.yml");
             $returnDataEmpty = [];
             $goals = 0;
             $players = [
@@ -77,26 +56,17 @@ class PageController
 
             $returnData = $returnDataEmpty;
             foreach ($data as $event) {
-                // check for idle time frame gap
-                // if so reset game
-                // if ($event['timeSec'] < time() - $idleTimeFrame) {
-                //     $returnData = $returnDataEmpty;
-                // }
-
                 $eventData = json_decode($event['data']);
                 switch ($event['type']) {
                     case 'CardSwipe':
                         // if goals eq 10 - reset game
                         if ($returnData['teams'][$eventData->team]['goals'] >= 10 || $returnData['teams'][(1 - $eventData->team)]['goals'] >= 10) {
                             $returnData = $returnDataEmpty;
-                            $this->app['db']->insert(
-                                'kickertable',
-                                [
-                                    "timeSec" => $event['timeSec'] - 1,
-                                    "usec" => 0,
-                                    "type" => "TableReset",
-                                    "data" => "[]"
-                                ]
+                            $this->eventRepository->insert(
+                                $event['timeSec'] - 1,
+                                0,
+                                EventRepository::TYPE_TABLE_RESET,
+                                "[]"
                             );
                         }
                         // check for dublicate users reset user id
@@ -124,14 +94,11 @@ class PageController
                         // if goals eq 10 - reset game
                         if ($returnData['teams'][$eventData->team]['goals'] >= 10 || $returnData['teams'][(1 - $eventData->team)]['goals'] >= 10) {
                             $returnData = $returnDataEmpty;
-                            $this->app['db']->insert(
-                                'kickertable',
-                                [
-                                    "timeSec" => $event['timeSec'] - 1,
-                                    "usec" => 0,
-                                    "type" => "TableReset",
-                                    "data" => "[]"
-                                ]
+                            $this->eventRepository->insert(
+                                $event['timeSec'] - 1,
+                                0,
+                                EventRepository::TYPE_TABLE_RESET,
+                                "[]"
                             );
                         }
                         $returnData['teams'][$eventData->team]['goals'] += 1;

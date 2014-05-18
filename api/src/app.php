@@ -76,6 +76,6 @@ $app->register(new \Providers\HardwareProvider());
 /**
  * Register page provider to enable routing and services
  */
-$app->register(new \Providers\PageProvider());
+$app->register(new \Providers\TableProvider());
 
 return $app;
