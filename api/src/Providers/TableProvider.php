@@ -9,6 +9,7 @@
 namespace Providers;
 
 use Controllers\TableController;
+use Repositories\UserRepository;
 use Services\TableService;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
@@ -26,6 +27,7 @@ class TableProvider implements ServiceProviderInterface
         $app['page.path.status_json'] = '/api/v1/status';
 
         $this->registerServices($app);
+        $this->registerRepositories($app);
         $this->registerControllers($app);
         $this->registerRoutes($app);
     }
@@ -49,6 +51,22 @@ class TableProvider implements ServiceProviderInterface
             function () use ($app) {
                 $service = new TableService($app['event.repository']);
                 return $service;
+            }
+        );
+    }
+
+    /**
+     * Register used repositories.
+     *
+     * @param Application $app An Application instance
+     * @return void
+     */
+    protected function registerRepositories(Application $app)
+    {
+        $app['user.repository'] = $app->share(
+            function () use ($app) {
+                $repository = new UserRepository($app['db']);
+                return $repository;
             }
         );
     }
