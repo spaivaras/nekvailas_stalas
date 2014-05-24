@@ -15,6 +15,9 @@ use Models\User;
 
 class UserRepository
 {
+    const USER_DEFAULT_ID = -1;
+    const USER_UNKNOWN_ID = 0;
+
     /**
      * Used DB connection.
      * @var Connection
@@ -37,6 +40,11 @@ class UserRepository
         $this->connection = $connection;
     }
 
+    /**
+     * @param int $cardId
+     * @return User
+     * @throws \Exception
+     */
     public function getUserByCardId($cardId)
     {
         if (isset($this->users[$cardId])) {
@@ -56,6 +64,9 @@ class UserRepository
             throw new \Exception('UserRepository: Error with executing query.');
         }
         $values = $stmt->fetch(\PDO::FETCH_ASSOC);
+        if ($values === null) {
+            return null;
+        }
         $user = new User();
         $this->users[$cardId] = $user->assign($values);
 

@@ -51,6 +51,7 @@ CREATE TABLE `kickertable_user` (
 
 LOCK TABLES `kickertable_user` WRITE;
 /*!40000 ALTER TABLE `kickertable_user` DISABLE KEYS */;
+INSERT INTO `kickertable_user` VALUES (-1,'Svečias', '');
 INSERT INTO `kickertable_user` VALUES (0,'Neatpažintas', '');
 /*!40000 ALTER TABLE `kickertable_user` ENABLE KEYS */;
 UNLOCK TABLES;

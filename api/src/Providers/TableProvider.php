@@ -49,7 +49,7 @@ class TableProvider implements ServiceProviderInterface
     {
         $app['table.service'] = $app->share(
             function () use ($app) {
-                $service = new TableService($app['event.repository']);
+                $service = new TableService($app['event.repository'], $app['user.repository']);
                 return $service;
             }
         );

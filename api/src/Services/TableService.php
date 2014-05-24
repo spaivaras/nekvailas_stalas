@@ -9,8 +9,8 @@
 namespace Services;
 
 use Repositories\EventRepository;
+use Repositories\UserRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Yaml\Yaml;
 
 class TableService
 {
@@ -21,10 +21,12 @@ class TableService
 
     /**
      * @param EventRepository $eventRepository
+     * @param UserRepository $userRepository
      */
-    public function __construct($eventRepository)
+    public function __construct($eventRepository, $userRepository)
     {
         $this->eventRepository = $eventRepository;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -35,12 +37,11 @@ class TableService
         $data = $this->eventRepository->getActiveEvent();
 
         if ($data && $data[count($data) - 1]['timeSec'] > time() - EventRepository::TIME_IDLE_FRAME) {
-            $users = Yaml::parse(__DIR__ . "/../users.yml");
             $returnDataEmpty = [];
             $goals = 0;
             $players = [
-                0 => $users["0"],
-                1 => $users["0"],
+                0 => UserRepository::USER_DEFAULT_ID,
+                1 => UserRepository::USER_DEFAULT_ID
             ];
             $teams = [
                 0 => [
@@ -59,56 +60,86 @@ class TableService
                 $eventData = json_decode($event['data']);
                 switch ($event['type']) {
                     case 'CardSwipe':
-                        // if goals eq 10 - reset game
-                        if ($returnData['teams'][$eventData->team]['goals'] >= 10 || $returnData['teams'][(1 - $eventData->team)]['goals'] >= 10) {
+                        if ($this->isResetGame($returnData, $event)) {
                             $returnData = $returnDataEmpty;
-                            $this->eventRepository->insert(
-                                $event['timeSec'] - 1,
-                                0,
-                                EventRepository::TYPE_TABLE_RESET,
-                                "[]"
-                            );
                         }
                         // check for dublicate users reset user id
-                        if ($returnData['teams'][0]['players'][0] == $users[$eventData->card_id]) {
-                            $returnData['teams'][0]['players'][0] = $users["0"];
+                        if ($returnData['teams'][0]['players'][0] == $eventData->card_id) {
+                            $returnData['teams'][0]['players'][0] = UserRepository::USER_DEFAULT_ID;
                         }
-                        if ($returnData['teams'][0]['players'][1] == $users[$eventData->card_id]) {
-                            $returnData['teams'][0]['players'][1] = $users["0"];
+                        if ($returnData['teams'][0]['players'][1] == $eventData->card_id) {
+                            $returnData['teams'][0]['players'][1] = UserRepository::USER_DEFAULT_ID;
                         }
-                        if ($returnData['teams'][1]['players'][0] == $users[$eventData->card_id]) {
-                            $returnData['teams'][1]['players'][0] = $users["0"];
+                        if ($returnData['teams'][1]['players'][0] == $eventData->card_id) {
+                            $returnData['teams'][1]['players'][0] = UserRepository::USER_DEFAULT_ID;
                         }
-                        if ($returnData['teams'][1]['players'][1] == $users[$eventData->card_id]) {
-                            $returnData['teams'][1]['players'][1] = $users["0"];
+                        if ($returnData['teams'][1]['players'][1] == $eventData->card_id) {
+                            $returnData['teams'][1]['players'][1] = UserRepository::USER_DEFAULT_ID;
                         }
                         // write user id
-                        if (isset($users[$eventData->card_id])) {
-                            $returnData['teams'][$eventData->team]['players'][$eventData->player] =
-                                $users[$eventData->card_id];
-                        } else {
-                            $returnData['teams'][$eventData->team]['players'][$eventData->player] = $users["1"];
-                        }
+                        $returnData['teams'][$eventData->team]['players'][$eventData->player] = $eventData->card_id;
                         break;
                     case 'AutoGoal':
-                        // if goals eq 10 - reset game
-                        if ($returnData['teams'][$eventData->team]['goals'] >= 10 || $returnData['teams'][(1 - $eventData->team)]['goals'] >= 10) {
+                        if ($this->isResetGame($returnData, $event)) {
                             $returnData = $returnDataEmpty;
-                            $this->eventRepository->insert(
-                                $event['timeSec'] - 1,
-                                0,
-                                EventRepository::TYPE_TABLE_RESET,
-                                "[]"
-                            );
                         }
                         $returnData['teams'][$eventData->team]['goals'] += 1;
                         break;
                 }
             }
 
-            return new JsonResponse(["status" => "ok", "table" => "busy", "data" => $returnData]);
+            return new JsonResponse(["status" => "ok", "table" => "busy", "data" => $this->processData($returnData)]);
         }
 
         return new JsonResponse(["status" => "ok", "table" => "free"]);
+    }
+
+    /**
+     * @param array $data
+     * @param array $event
+     * @return bool
+     */
+    protected function isResetGame($data, $event)
+    {
+        $res = false;
+        // if goals eq 10 - reset game
+        if ($data['teams'][0]['goals'] >= 10 || $data['teams'][1]['goals'] >= 10) {
+            $this->eventRepository->insert(
+                $event['timeSec'] - 1,
+                0,
+                EventRepository::TYPE_TABLE_RESET,
+                "[]"
+            );
+            $res = true;
+        }
+        return $res;
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    protected function processData($data)
+    {
+        $data["teams"][0]["players"][0] = $this->getUserInfoByCardId($data["teams"][0]["players"][0]);
+        $data["teams"][0]["players"][1] = $this->getUserInfoByCardId($data["teams"][0]["players"][1]);
+        $data["teams"][1]["players"][0] = $this->getUserInfoByCardId($data["teams"][1]["players"][0]);
+        $data["teams"][1]["players"][1] = $this->getUserInfoByCardId($data["teams"][1]["players"][1]);
+
+        return $data;
+    }
+
+    /**
+     * @param int $cardId
+     * @return array
+     */
+    protected function getUserInfoByCardId($cardId)
+    {
+        $user = $this->userRepository->getUserByCardId($cardId);
+        if ($user === null) {
+            $user = $this->userRepository->getUserByCardId(UserRepository::USER_UNKNOWN_ID);
+        }
+
+        return ["img" => $user->getUserId() . '.png', "" => $user->getFirstName()];
     }
 } 
