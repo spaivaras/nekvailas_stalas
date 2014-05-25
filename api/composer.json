@@ -4,6 +4,7 @@
         "silex/silex": "~1.0",
         "symfony/yaml": "2.5.*@dev",
         "symfony/twig-bridge": "2.3.*@dev",
+        "symfony/console": "~2.4",
         "doctrine/dbal": ">=2.2.0,<2.4.0-dev"
     },
     "autoload": {
