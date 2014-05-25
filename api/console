@@ -1,0 +1,10 @@
+#!/usr/bin/env php
+<?php
+require_once 'vendor/autoload.php';
+// console
+
+use Symfony\Component\Console\Application;
+
+$application = new Application();
+$application->add(new \Command\TableSimulatorCommand());
+$application->run();
