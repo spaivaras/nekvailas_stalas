@@ -28,7 +28,7 @@ CREATE TABLE `kickertable_event` (
   `type` varchar(16) NOT NULL,
   `data` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +42,7 @@ CREATE TABLE `kickertable_user` (
   `firstName` varchar(20) NOT NULL DEFAULT '',
   `lastName` varchar(30) NOT NULL DEFAULT '',
   PRIMARY KEY (`userId`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -70,7 +70,7 @@ CREATE TABLE `kickertable_user_card` (
   PRIMARY KEY (`cardId`),
   KEY `CardNumber` (`cardNumber`),
   KEY `UserId` (`userId`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
