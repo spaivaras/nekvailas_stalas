@@ -140,6 +140,6 @@ class TableService
             $user = $this->userRepository->getUserByCardId(UserRepository::USER_UNKNOWN_ID);
         }
 
-        return ["img" => $user->getUserId() . '.png', "" => $user->getFirstName()];
+        return ["img" => $user->getUserId() . '.png', "name" => $user->getFirstName()];
     }
 } 

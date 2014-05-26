@@ -64,8 +64,13 @@ class UserRepository
             throw new \Exception('UserRepository: Error with executing query.');
         }
         $values = $stmt->fetch(\PDO::FETCH_ASSOC);
-        if ($values === null) {
-            return null;
+        if ($values === null || $values === false) {
+            $user = null;
+            if ($cardId === self::USER_UNKNOWN_ID) {
+                $user = new User();
+                $user->assign(['userId' => -1, 'firstName' => 'Svečias']);
+            }
+            return $user;
         }
         $user = new User();
         $this->users[$cardId] = $user->assign($values);
