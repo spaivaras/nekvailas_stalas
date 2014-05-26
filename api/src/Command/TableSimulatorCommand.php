@@ -37,27 +37,39 @@ class TableSimulatorCommand extends Command
         $startTime = time();
         $endTime = $startTime + $totalTime;
 
-        $minTime = 5;
-        $tableShake = 15;
-        $autoGoal = 20;
-        //$cardSwipe = 90;
+        $minTime = 1;
+        $tableShake = 10;
+        $autoGoal = 15;
+        $cardSwipe = 15;
 
         $nextTableShake = $startTime + $tableShake;
         $nextGoal = $startTime + $autoGoal;
+        $nextCardSwipe = $startTime + $cardSwipe;
 
         $currentTime = $startTime;
         $output->writeln('Command begin at: ' . date('h:i:s'));
         while ($currentTime < $endTime) {
 
             if ($currentTime >= $nextTableShake) {
-                $this->sendEvent(EventRepository::TYPE_TABLE_SHAKE);
-                $output->writeln('TableShake: ' . date('h:i:s', $currentTime));
+                $res = $this->sendEvent(EventRepository::TYPE_TABLE_SHAKE, []);
+                $output->writeln('<comment>TableShake:<comment> ' . date('h:i:s', $currentTime));
+                $output->writeln($res);
                 $nextTableShake = $currentTime + mt_rand($minTime, $tableShake);
             }
             if ($currentTime >= $nextGoal) {
-                $this->sendEvent(EventRepository::TYPE_GOAL_AUTO);
-                $output->writeln('AutoGoal: ' . date('h:i:s', $currentTime));
+                $res = $this->sendEvent(EventRepository::TYPE_GOAL_AUTO, ["team" => mt_rand(0, 1)]);
+                $output->writeln('<info>AutoGoal:<info> ' . date('h:i:s', $currentTime));
+                $output->writeln($res);
                 $nextGoal = $currentTime + mt_rand($minTime, $autoGoal);
+            }
+            if ($currentTime >= $nextCardSwipe) {
+                $res = $this->sendEvent(
+                    EventRepository::TYPE_CARD_SWIPE,
+                    ["team" => mt_rand(0, 1), "player" => mt_rand(0, 1), "card_id" => mt_rand(100, 999)]
+                );
+                $output->writeln('<question>CardSwipe:<question> ' . date('h:i:s', $currentTime));
+                $output->writeln($res);
+                $nextCardSwipe = $currentTime + mt_rand($minTime, $cardSwipe);
             }
 
             $currentTime = time();
@@ -65,9 +77,33 @@ class TableSimulatorCommand extends Command
         $output->writeln('Command end at: ' . date('h:i:s'));
     }
 
-    protected function sendEvent($eventName)
+    protected function sendEvent($eventName, $data)
     {
-        //TODO: send event to /api/v1/event
+        $uri = '127.0.0.1/kickertable/api/v1/event';
+        $handler = curl_init($uri);
+        $parameters = json_encode(
+            [
+                [
+                    "time" => ["sec" => time(), "usec" => 101010],
+                    "type" => $eventName,
+                    "data" => $data
+                ]
+            ]
+        );
+
+        curl_setopt($handler, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($handler, CURLOPT_POST, true);
+        curl_setopt($handler, CURLOPT_POSTFIELDS, $parameters);
+        curl_setopt(
+            $handler,
+            CURLOPT_HTTPHEADER,
+            ['Content-type: application/json', 'Content-Length: ' . strlen($parameters)]
+        );
+
+        $response = curl_exec($handler);
+        curl_close($handler);
+
+        return "\t\t\t Request >>>  " . $parameters . PHP_EOL . "\t\t\t Response <<< " . $response;
     }
 }
  

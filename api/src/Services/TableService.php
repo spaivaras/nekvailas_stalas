@@ -40,8 +40,8 @@ class TableService
             $returnDataEmpty = [];
             $goals = 0;
             $players = [
-                0 => UserRepository::USER_DEFAULT_ID,
-                1 => UserRepository::USER_DEFAULT_ID
+                0 => UserRepository::USER_DEFAULT_CARD_NUMBER,
+                1 => UserRepository::USER_DEFAULT_CARD_NUMBER
             ];
             $teams = [
                 0 => [
@@ -63,18 +63,18 @@ class TableService
                         if ($this->isResetGame($returnData, $event)) {
                             $returnData = $returnDataEmpty;
                         }
-                        // check for dublicate users reset user id
+                        // check for duplicate users reset user id
                         if ($returnData['teams'][0]['players'][0] == $eventData->card_id) {
-                            $returnData['teams'][0]['players'][0] = UserRepository::USER_DEFAULT_ID;
+                            $returnData['teams'][0]['players'][0] = UserRepository::USER_DEFAULT_CARD_NUMBER;
                         }
                         if ($returnData['teams'][0]['players'][1] == $eventData->card_id) {
-                            $returnData['teams'][0]['players'][1] = UserRepository::USER_DEFAULT_ID;
+                            $returnData['teams'][0]['players'][1] = UserRepository::USER_DEFAULT_CARD_NUMBER;
                         }
                         if ($returnData['teams'][1]['players'][0] == $eventData->card_id) {
-                            $returnData['teams'][1]['players'][0] = UserRepository::USER_DEFAULT_ID;
+                            $returnData['teams'][1]['players'][0] = UserRepository::USER_DEFAULT_CARD_NUMBER;
                         }
                         if ($returnData['teams'][1]['players'][1] == $eventData->card_id) {
-                            $returnData['teams'][1]['players'][1] = UserRepository::USER_DEFAULT_ID;
+                            $returnData['teams'][1]['players'][1] = UserRepository::USER_DEFAULT_CARD_NUMBER;
                         }
                         // write user id
                         $returnData['teams'][$eventData->team]['players'][$eventData->player] = $eventData->card_id;
@@ -121,23 +121,23 @@ class TableService
      */
     protected function processData($data)
     {
-        $data["teams"][0]["players"][0] = $this->getUserInfoByCardId($data["teams"][0]["players"][0]);
-        $data["teams"][0]["players"][1] = $this->getUserInfoByCardId($data["teams"][0]["players"][1]);
-        $data["teams"][1]["players"][0] = $this->getUserInfoByCardId($data["teams"][1]["players"][0]);
-        $data["teams"][1]["players"][1] = $this->getUserInfoByCardId($data["teams"][1]["players"][1]);
+        $data["teams"][0]["players"][0] = $this->getUserInfoByCardNumber($data["teams"][0]["players"][0]);
+        $data["teams"][0]["players"][1] = $this->getUserInfoByCardNumber($data["teams"][0]["players"][1]);
+        $data["teams"][1]["players"][0] = $this->getUserInfoByCardNumber($data["teams"][1]["players"][0]);
+        $data["teams"][1]["players"][1] = $this->getUserInfoByCardNumber($data["teams"][1]["players"][1]);
 
         return $data;
     }
 
     /**
-     * @param int $cardId
+     * @param int $cardNumber
      * @return array
      */
-    protected function getUserInfoByCardId($cardId)
+    protected function getUserInfoByCardNumber($cardNumber)
     {
-        $user = $this->userRepository->getUserByCardId($cardId);
+        $user = $this->userRepository->getUserByCardNumber($cardNumber);
         if ($user === null) {
-            $user = $this->userRepository->getUserByCardId(UserRepository::USER_UNKNOWN_ID);
+            $user = $this->userRepository->getUserByCardNumber(UserRepository::USER_UNKNOWN_CARD_NUMBER);
         }
 
         return ["img" => $user->getUserId() . '.png', "name" => $user->getFirstName()];

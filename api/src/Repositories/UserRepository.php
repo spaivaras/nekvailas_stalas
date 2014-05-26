@@ -15,8 +15,8 @@ use Models\User;
 
 class UserRepository
 {
-    const USER_DEFAULT_ID = -1;
-    const USER_UNKNOWN_ID = 0;
+    const USER_DEFAULT_CARD_NUMBER = 0;
+    const USER_UNKNOWN_CARD_NUMBER = 1;
 
     /**
      * Used DB connection.
@@ -41,14 +41,14 @@ class UserRepository
     }
 
     /**
-     * @param int $cardId
+     * @param int $cardNumber
      * @return User
      * @throws \Exception
      */
-    public function getUserByCardId($cardId)
+    public function getUserByCardNumber($cardNumber)
     {
-        if (isset($this->users[$cardId])) {
-            return $this->users[$cardId];
+        if (isset($this->users[$cardNumber])) {
+            return $this->users[$cardNumber];
         }
 
         $userTableName = User::TABLE_NAME;
@@ -56,25 +56,25 @@ class UserRepository
         $sql = "SELECT U1.userId, U1.firstName, U1.lastName
             FROM {$userTableName} AS U1
             LEFT JOIN {$cardTableName} AS C1 ON U1.userId = C1.userId
-            WHERE C1.cardId = :cardId";
+            WHERE C1.cardNumber = :cardId";
 
         $stmt = $this->connection->prepare($sql);
-        $stmt->bindValue("cardId", $cardId);
+        $stmt->bindValue("cardId", $cardNumber);
         if (!$stmt->execute()) {
             throw new \Exception('UserRepository: Error with executing query.');
         }
         $values = $stmt->fetch(\PDO::FETCH_ASSOC);
         if ($values === null || $values === false) {
             $user = null;
-            if ($cardId === self::USER_UNKNOWN_ID) {
+            if ($cardNumber === self::USER_UNKNOWN_CARD_NUMBER) {
                 $user = new User();
-                $user->assign(['userId' => -1, 'firstName' => 'Svečias']);
+                $user->assign(['userId' => 1, 'firstName' => 'Nežinomas']);
             }
             return $user;
         }
         $user = new User();
-        $this->users[$cardId] = $user->assign($values);
+        $this->users[$cardNumber] = $user->assign($values);
 
-        return $this->users[$cardId];
+        return $this->users[$cardNumber];
     }
 }

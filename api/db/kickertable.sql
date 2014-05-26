@@ -79,8 +79,8 @@ CREATE TABLE `kickertable_user_card` (
 
 LOCK TABLES `kickertable_user_card` WRITE;
 /*!40000 ALTER TABLE `kickertable_user_card` DISABLE KEYS */;
-INSERT INTO `kickertable_user_card` VALUES (1,-1,-1,'');
-INSERT INTO `kickertable_user_card` VALUES (2,0,0,'');
+INSERT INTO `kickertable_user_card` VALUES (1,-1,0,'');
+INSERT INTO `kickertable_user_card` VALUES (2,0,1,'');
 /*!40000 ALTER TABLE `kickertable_user_card` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
