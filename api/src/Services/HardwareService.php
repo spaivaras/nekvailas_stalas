@@ -20,7 +20,7 @@ class HardwareService
     /**
      * @param EventRepository $eventRepository
      */
-    public function _construct($eventRepository)
+    public function __construct($eventRepository)
     {
         $this->eventRepository = $eventRepository;
     }
@@ -30,7 +30,7 @@ class HardwareService
      */
     public function handleEvent($requestData)
     {
-        $this->checkIsNewGame($requestData);
+        $this->checkIsNewGame($requestData[0]['time']['sec'] - 1);
 
         // array of events
         foreach ($requestData as $event) {
@@ -43,15 +43,18 @@ class HardwareService
         }
     }
 
-    protected function checkIsNewGame($requestData)
+    /**
+     * @param integer $time
+     */
+    protected function checkIsNewGame($time)
     {
         $count = $this->eventRepository->getActiveEventCount();
 
         //if last $idleTimeFrame second not have event, then it will be new game
         if (!$count) {
             $this->eventRepository->insert(
-                $requestData[0]['time']['sec'] - 1,
-                $requestData[0]['time']['usec'],
+                $time,
+                0,
                 EventRepository::TYPE_TABLE_RESET,
                 "[]"
             );

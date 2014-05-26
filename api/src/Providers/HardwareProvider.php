@@ -24,8 +24,8 @@ class HardwareProvider implements ServiceProviderInterface
     {
         $app['hardware.event.register_path'] = '/api/v1/event';
 
-        $this->registerServices($app);
         $this->registerRepositories($app);
+        $this->registerServices($app);
         $this->registerControllers($app);
         $this->registerRoutes($app);
     }

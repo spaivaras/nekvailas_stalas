@@ -20,6 +20,10 @@ class EventRepository
     const TIME_IDLE_FRAME = 50;
 
     /**
+     * @var string
+     */
+    protected $tableName = 'kickertable_event';
+    /**
      * Used DB connection.
      *
      * @var Connection
@@ -45,13 +49,13 @@ class EventRepository
             "data" => $data
         ];
 
-        $this->connection->insert('kickertable_event', $modelData);
+        $this->connection->insert($this->tableName, $modelData);
     }
 
     public function getActiveEventCount()
     {
         $sql = "SELECT count(*) as `count`
-            FROM kickertable
+            FROM {$this->tableName}
             WHERE timeSec > (UNIX_TIMESTAMP() - " . self::TIME_IDLE_FRAME . ")
             AND timeSec < UNIX_TIMESTAMP()";
         $count = $this->connection->fetchColumn($sql);
@@ -62,8 +66,8 @@ class EventRepository
     public function getActiveEvent()
     {
         $sql = "SELECT timeSec, type, data
-            FROM kickertable
-            WHERE timeSec > (SELECT MAX(timeSec) FROM kickertable WHERE type = '" . self::TYPE_TABLE_RESET . "')
+            FROM {$this->tableName}
+            WHERE timeSec > (SELECT MAX(timeSec) FROM {$this->tableName} WHERE type = '" . self::TYPE_TABLE_RESET . "')
             ORDER BY timeSec";
 
         $data = $this->connection->fetchAll($sql);
