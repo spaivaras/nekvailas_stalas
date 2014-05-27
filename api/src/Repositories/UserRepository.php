@@ -61,7 +61,7 @@ class UserRepository
         $stmt = $this->connection->prepare($sql);
         $stmt->bindValue("cardId", $cardNumber);
         if (!$stmt->execute()) {
-            throw new \Exception('UserRepository: Error with executing query.');
+            throw new \Exception('UserRepository: Error with executing query 1.');
         }
         $values = $stmt->fetch(\PDO::FETCH_ASSOC);
         if ($values === null || $values === false) {
@@ -76,5 +76,24 @@ class UserRepository
         $this->users[$cardNumber] = $user->assign($values);
 
         return $this->users[$cardNumber];
+    }
+
+    public function saveUser($user)
+    {
+        $userTableName = User::TABLE_NAME;
+        $data = $user->dump();
+        $columns = join(',', array_keys($data));
+        $keys = ':' . join(',:', array_keys($data));
+        $sql = "INSERT INTO {$userTableName}
+          ({$columns}) VALUES ($keys)";
+        //      ON DUPLICATE KEY UPDATE c=c+1;";
+        $stmt = $this->connection->prepare($sql);
+        foreach ($data as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+
+        if (!$stmt->execute()) {
+            throw new \Exception('UserRepository: Error with executing query 2.');
+        }
     }
 }

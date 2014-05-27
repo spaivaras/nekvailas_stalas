@@ -7,4 +7,5 @@ use Symfony\Component\Console\Application;
 
 $application = new Application();
 $application->add(new \Command\TableSimulatorCommand());
+$application->add(new \Command\UserImportCommand());
 $application->run();
