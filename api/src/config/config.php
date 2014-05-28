@@ -14,3 +14,5 @@ if (file_exists(__DIR__ . '/../../config.yml')) {
     $projectConfig = Yaml::parse(__DIR__ . "/../../config.yml");
     $config = array_replace_recursive($config, $projectConfig);
 }
+
+$app['config'] = $config;

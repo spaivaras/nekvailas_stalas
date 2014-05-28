@@ -8,6 +8,8 @@
  */
 namespace Command;
 
+use Doctrine\DBAL\Connection;
+use Models\Card;
 use Models\User;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressHelper;
@@ -17,6 +19,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UserImportCommand extends Command
 {
+    /**
+     * @var Connection
+     */
+    protected $connection;
+
     /**
      * Configure command
      */
@@ -63,14 +70,40 @@ class UserImportCommand extends Command
         }
     }
 
+    /**
+     * @param array $data
+     */
     protected function addUser($data)
     {
         $user = new User();
+        $user->setConnection($this->getConnection());
         $fullName = explode(' ', $data['Darbuotojas']);
         $firstName = $fullName[0];
         $lastName = isset($fullName[1]) ? $fullName[1] : '';
         $user->assign(['userId' => $data['Intranet ID'], 'firstName' => $firstName, 'lastName' => $lastName]);
-        //TODO: save in DB
+        $user->save();
+
+        $card = new Card();
+        $card->setConnection($this->getConnection());
+        $cardNumber = explode(' ', $data['Kortelės nr.']);
+        $card->assign(
+            ['userId' => $data['Intranet ID'], 'cardNumber' => $cardNumber[0], 'cardValue' => $data['Kortelės nr.']]
+        );
+        $card->save();
+    }
+
+    /**
+     * @return Connection
+     */
+    protected function getConnection()
+    {
+        if ($this->connection !== null) {
+            return $this->connection;
+        }
+        $connection = $this->getHelper('connection');
+        $this->connection = $connection->getConnection();
+
+        return $this->connection;
     }
 }
  

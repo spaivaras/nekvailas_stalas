@@ -7,8 +7,28 @@
  */
 namespace Models;
 
+use Doctrine\DBAL\Connection;
+
 class BaseModel
 {
+    /**
+     * @var Connection
+     */
+    protected $connection;
+
+    /**
+     * @var array
+     */
+    protected $black_list = ['connection' => null, 'black_list' => null];
+
+    /**
+     * @param Connection $connection
+     */
+    public function setConnection($connection)
+    {
+        $this->connection = $connection;
+    }
+
     /**
      * Dump document data as an array
      *
@@ -16,7 +36,7 @@ class BaseModel
      */
     public function dump()
     {
-        return get_object_vars($this);
+        return array_diff_key(get_object_vars($this), $this->black_list);
     }
 
     /**
@@ -32,5 +52,26 @@ class BaseModel
         }
 
         return $this;
+    }
+
+    /**
+     * @param string $tableName
+     * @throws \Exception
+     */
+    public function save($tableName)
+    {
+        $data = $this->dump();
+        $columns = join(',', array_keys($data));
+        $keys = ':' . join(',:', array_keys($data));
+        $sql = "INSERT INTO {$tableName}
+          ({$columns}) VALUES ($keys)";
+        $stmt = $this->connection->prepare($sql);
+        foreach ($data as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+
+        if (!$stmt->execute()) {
+            throw new \Exception('Error with executing query.');
+        }
     }
 }

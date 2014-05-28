@@ -9,7 +9,6 @@
  * Load configs from default_config.yml and project specific config.yml
  */
 include 'Config/config.php';
-$app['config'] = $config;
 
 /**
  * Set script timezone
@@ -32,21 +31,7 @@ $app->register(
 /**
  * Register doctrine provider to enable DBAL usage.
  */
-$app->register(
-    new \Silex\Provider\DoctrineServiceProvider(),
-    array(
-        'db.options' => array(
-            'driver' => $config['db']['driver'],
-            'dbname' => $config['db']['dbname'],
-            'host' => $config['db']['host'],
-            'user' => $config['db']['user'],
-            'password' => $config['db']['password'],
-            'driverOptions' => array(
-                1002 => 'SET NAMES utf8'
-            )
-        ),
-    )
-);
+include 'Config/database.php';
 
 /**
  * Debug mode configuration
@@ -77,5 +62,3 @@ $app->register(new \Providers\HardwareProvider());
  * Register page provider to enable routing and services
  */
 $app->register(new \Providers\TableProvider());
-
-return $app;

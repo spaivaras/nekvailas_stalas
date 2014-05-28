@@ -103,4 +103,12 @@ class Card extends BaseModel
     {
         return $this->userId;
     }
+
+    /**
+     * Save model data to DB
+     */
+    public function save()
+    {
+        parent::save(self::TABLE_NAME);
+    }
 }
