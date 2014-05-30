@@ -1,12 +1,9 @@
 <?php
 
-use Silex\Provider;
+require_once __DIR__ . '/../vendor/autoload.php';
 
-ini_set('display_errors', 0);
+$app = new \Silex\Application();
 
-require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__ . '/../src/app.php';
 
-$app = require __DIR__.'/../src/app.php';
-
-require __DIR__.'/../src/controllers.php';
 $app->run();

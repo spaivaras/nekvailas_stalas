@@ -1,46 +1,64 @@
 <?php
 
-use Silex\Application;
-use Symfony\Component\Yaml\Yaml;
-use Silex\Provider\ServiceControllerServiceProvider;
-use Silex\Provider\DoctrineServiceProvider;
-use Symfony\Component\HttpFoundation\Request;
-use Silex\Provider\TwigServiceProvider;
+//use Silex\Provider\DoctrineServiceProvider;
+//;
 
-date_default_timezone_set('Europe/Vilnius');
+/** @var \Silex\Application $app */
 
-$app = new Application();
+/**
+ * Load configs from default_config.yml and project specific config.yml
+ */
+include 'Config/config.php';
 
-$app->register(new ServiceControllerServiceProvider());
-$app->register(new TwigServiceProvider(), array(
-    'twig.path'    => array(__DIR__.'/../templates'),
-));
+/**
+ * Set script timezone
+ */
+date_default_timezone_set($config['timezone']);
 
-$config = Yaml::parse(__DIR__."/../config.yml");
-$app->register(new DoctrineServiceProvider(), array(
-    'db.options' => array(
-        'driver'    =>  $config['db']['driver'],
-        'dbname'    =>  $config['db']['dbname'],
-        'host'      =>  $config['db']['host'],
-        'user'      =>  $config['db']['user'],
-        'password'  =>  $config['db']['password'],
-        'driverOptions' => array(
-            1002    =>  'SET NAMES utf8'
-        )
-    ),
-));
+/**
+ * Register silex provider to use controllers as services.
+ */
+$app->register(new \Silex\Provider\ServiceControllerServiceProvider());
 
+/**
+ * Register twig service provides to use the Twig template engine
+ */
+$app->register(
+    new \Silex\Provider\TwigServiceProvider(),
+    array('twig.path' => array(__DIR__ . '/../templates'))
+);
+
+/**
+ * Register doctrine provider to enable DBAL usage.
+ */
+include 'Config/database.php';
+
+/**
+ * Debug mode configuration
+ */
 if (isset($config['debug']) && $config['debug'] === true) {
     ini_set('display_errors', E_ALL ^ E_NOTICE);
     $app['debug'] = true;
 }
 
-// accepting JSON
-$app->before(function (Request $request) {
-    if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
-        $data = json_decode($request->getContent(), true);
-        $request->request->replace(is_array($data) ? $data : array());
+/**
+ * Request with JSON transform data to associative array
+ */
+$app->before(
+    function (\Symfony\Component\HttpFoundation\Request $request) {
+        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+            $data = json_decode($request->getContent(), true);
+            $request->request->replace(is_array($data) ? $data : array());
+        }
     }
-});
+);
 
-return $app;
+/**
+ * Register hardware provider to enable routing and services
+ */
+$app->register(new \Providers\HardwareProvider());
+
+/**
+ * Register page provider to enable routing and services
+ */
+$app->register(new \Providers\TableProvider());

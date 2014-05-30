@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+require_once 'vendor/autoload.php';
+// console
+
+use Symfony\Component\Console\Application;
+
+/**
+ * Load configs from default_config.yml and project specific config.yml
+ */
+$app = new \Silex\Application();
+include 'src/Config/config.php';
+include 'src/Config/database.php';
+
+$application = new Application();
+$helperSet = $application->getHelperSet();
+$connectionHelper = new \Console\ConnectionHelper($app['db']);
+$helperSet->set($connectionHelper);
+
+$application->add(new \Command\TableSimulatorCommand());
+$command = new \Command\UserImportCommand();
+$command->setApplication($application);
+$application->add($command);
+$application->run();
