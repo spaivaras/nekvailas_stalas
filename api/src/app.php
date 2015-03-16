@@ -62,3 +62,8 @@ $app->register(new \Providers\HardwareProvider());
  * Register page provider to enable routing and services
  */
 $app->register(new \Providers\TableProvider());
+
+/**
+ * Register open api provider to enable routing and services
+ */
+$app->register(new \Providers\OpenApiProvider());
