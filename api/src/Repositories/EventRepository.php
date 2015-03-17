@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Darius
- * Date: 14.5.18
- * Time: 11.08
- */
+
 namespace Repositories;
 
 use \Doctrine\DBAL\Connection;
@@ -65,7 +60,7 @@ class EventRepository
 
     public function getActiveEvent()
     {
-        $sql = "SELECT timeSec, type, data
+        $sql = "SELECT `timeSec`, `type`, `data`
             FROM {$this->tableName}
             WHERE timeSec > (SELECT MAX(timeSec) FROM {$this->tableName} WHERE type = '" . self::TYPE_TABLE_RESET . "')
             ORDER BY timeSec";
@@ -75,4 +70,40 @@ class EventRepository
         return $data;
     }
 
-} 
+    /**
+     * @param int $lastRows
+     *
+     * @return array
+     */
+    public function getLastRows($lastRows)
+    {
+        $sql = "SELECT *
+          FROM {$this->tableName}
+          WHERE `type` <> '" . self::TYPE_TABLE_RESET . "'
+          ORDER BY `id` DESC
+          LIMIT 0, {$lastRows}";
+
+        $data = $this->connection->fetchAll($sql);
+
+        return $data;
+    }
+
+    /**
+     * @param int $rows
+     * @param int $fromId
+     *
+     * @return array
+     */
+    public function getRowsFrom($rows, $fromId)
+    {
+        $sql = "SELECT *
+          FROM {$this->tableName}
+          WHERE `id` > {$fromId} AND `type` <> '" . self::TYPE_TABLE_RESET . "'
+          ORDER BY `id`
+          LIMIT 0, {$rows}";
+
+        $data = $this->connection->fetchAll($sql);
+
+        return $data;
+    }
+}
