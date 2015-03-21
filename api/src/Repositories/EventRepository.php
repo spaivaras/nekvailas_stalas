@@ -72,14 +72,17 @@ class EventRepository
 
     /**
      * @param int $lastRows
+     * @param int $fromTs
+     * @param int $tillTs
      *
      * @return array
      */
-    public function getLastRows($lastRows)
+    public function getLastRows($lastRows, $fromTs, $tillTs)
     {
+        $BeweenTsSqlClause = $this->getBetweenTsSqlClause($fromTs, $tillTs);
         $sql = "SELECT *
           FROM {$this->tableName}
-          WHERE `type` <> '" . self::TYPE_TABLE_RESET . "'
+          WHERE `type` <> '" . self::TYPE_TABLE_RESET . "' AND {$BeweenTsSqlClause}
           ORDER BY `id` DESC
           LIMIT 0, {$lastRows}";
 
@@ -91,19 +94,36 @@ class EventRepository
     /**
      * @param int $rows
      * @param int $fromId
+     * @param int $fromTs
+     * @param int $tillTs
      *
      * @return array
      */
-    public function getRowsFrom($rows, $fromId)
+    public function getRowsFrom($rows, $fromId, $fromTs, $tillTs)
     {
+        $BeweenTsSqlClause = $this->getBetweenTsSqlClause($fromTs, $tillTs);
         $sql = "SELECT *
           FROM {$this->tableName}
-          WHERE `id` > {$fromId} AND `type` <> '" . self::TYPE_TABLE_RESET . "'
+          WHERE `id` > {$fromId} AND `type` <> '" . self::TYPE_TABLE_RESET . "' AND {$BeweenTsSqlClause}
           ORDER BY `id`
           LIMIT 0, {$rows}";
 
         $data = $this->connection->fetchAll($sql);
 
         return $data;
+    }
+
+    /**
+     * @param int $fromTs
+     * @param int $tillTs
+     *
+     * @return string
+     */
+    private function getBetweenTsSqlClause($fromTs, $tillTs) {
+        if ($fromTs > 0) {
+            return sprintf(" (`timeSec` >= '%u' AND `timeSec` <= '%u') ", $fromTs, $tillTs);
+        }
+
+        return '1';
     }
 }
