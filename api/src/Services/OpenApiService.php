@@ -22,15 +22,17 @@ class OpenApiService
     /**
      * @param int $lastRows
      * @param int $fromRecord
+     * @param int $fromTs
+     * @param int $tillTs
      *
      * @return array
      */
-    public function getLastRows($lastRows, $fromRecord)
+    public function getLastRows($lastRows, $fromRecord, $fromTs, $tillTs)
     {
         if ($fromRecord != 0) {
-            $result = $this->eventRepository->getRowsFrom($lastRows, $fromRecord);
+            $result = $this->eventRepository->getRowsFrom($lastRows, $fromRecord, $fromTs, $tillTs);
         } else {
-            $result = $this->eventRepository->getLastRows($lastRows);
+            $result = $this->eventRepository->getLastRows($lastRows, $fromTs, $tillTs);
         }
 
         return $result;
